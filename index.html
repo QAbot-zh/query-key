@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>API 信息测活</title>
+    <title>API CHECKER</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="https://openai.com/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/layui/2.6.8/css/layui.min.css">
@@ -87,6 +87,10 @@
             margin-bottom: 10px;
         }
 
+        .model-input-container input[type="text"] {
+            margin-right: 10px;
+        }
+
         .model-input-container textarea[type="text"] {
             width: 70%;
             height: 200px;
@@ -110,12 +114,6 @@
             margin-top: 20px;
             text-align: center;
         }
-
-        .error {
-            color: red;
-            margin-bottom: 20px;
-        }
-
 
         .response-container pre {
             white-space: pre-wrap;
@@ -220,11 +218,109 @@
         .copyright a:hover {
             text-decoration: underline;
         }
+
+        .verify-btn {
+            padding: 5px 10px;
+            margin-left: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 3px;
+            color: white;
+        }
+
+        .verify-btn {
+            background-color: #ffc107;
+        }
+
+        .verify-btn {
+            background-color: #28a745;
+        }
+
+        .model-filter-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .model-filter-container input[type="text"] {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .model-filter-container button {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .checkbox-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-container label {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        .model-filter-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .model-filter-container input[type="text"] {
+            flex-grow: 1;
+            margin-right: 10px;
+        }
+
+        .model-filter-container button {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .model-filter-container button.clear {
+            background-color: #f44336;
+        }
+
+        .checkbox-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-container label {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        #modelList {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>API 信息测活</h1>
+    <h1>API CHECKER</h1>
     <h3>（适配 oneapi/newapi 等中转格式）</h3>
 
     <form id="apiForm">
@@ -233,7 +329,8 @@
         <input type="text" id="api_url" name="api_url" placeholder="接口地址，如：https://api.openai.com" value="">
         <input type="text" id="api_key" name="api_key" placeholder="密钥，如：sk-TodayIsThursdayVme50ForKFC" value="">
         <div class="model-input-container" id="model-input-container">
-            <textarea type="text" id="model_name" name="model_name" placeholder="支持手动填入测试模型名称，用英文逗号分隔多个模型"></textarea>
+            <textarea type="text" id="model_name" name="model_name"
+                      placeholder="支持手动填入测试模型名称，用英文逗号分隔多个模型"></textarea>
             <input type="button" value="获取模型列表" style="height: 50px" onclick="getModelList()">
         </div>
         <div id="modelCheckboxes"></div>
@@ -257,8 +354,8 @@
     </form>
 </div>
 <div class="copyright">
-    <!--    不要删除感谢 Rick 和 Megasoft 的贡献-->
-    <p> © 2024 linuxdo 版权所有<br>贡献者：<a href="https://linux.do/u/rick" target="_blank"><img
+    <!--    不要删除 感谢 Rick 和 Megasoft 的贡献-->
+    <p> © 2024 linuxdoer 版权所有<br>贡献者：<a href="https://linux.do/u/rick" target="_blank"><img
             src="https://linux.do/user_avatar/linux.do/rick/288/137821_2.png" alt="rick">rick </a>和<a
             href="https://linux.do/u/zhong_little" target="_blank"><img
             src="https://linux.do/user_avatar/linux.do/zhong_little/288/104887_2.png" alt="Megasoft">Megasoft</a></p>
@@ -293,12 +390,12 @@
     });
 
     function getModelList() {
-        const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');;
+        const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');
         const apiKey = document.getElementById('api_key').value;
         console.log(apiUrl, apiKey);
 
         layui.use('layer', function () {
-            var layer = layui.layer;
+            let layer = layui.layer;
 
             layer.load();
             fetch(`${apiUrl}/v1/models`, {
@@ -324,111 +421,41 @@
     // 显示模型复选框
     function displayModelCheckboxes(models) {
         layui.use(['layer', 'form'], function () {
-            var layer = layui.layer;
-            var form = layui.form;
+            let layer = layui.layer;
+            let form = layui.form;
 
             let content = '<div style="padding: 20px;"><form class="layui-form">';
             content += '<div id="selectedCount">已选择 0 个模型</div>';
             content += `
-                <div class="layui-form-item ">
-                    <input type="text" id="prefixFilter" placeholder="指定模型前缀，如：gpt" style="margin-left: 10px; width: 200px;">
+                <div class="model-filter-container">
+                    <input type="text" id="prefixFilter" placeholder="输入模型前缀筛选">
+                    <button type="button" onclick="filterModels()">筛选</button>
+                    <button type="button" class="clear" onclick="clearFilter()">清空</button>
+                </div>
+                <div class="checkbox-container">
+                    <label><input type="checkbox" lay-skin="primary" lay-filter="checkAll" title="全选"></label>
+                    <label><input type="checkbox" lay-skin="primary" lay-filter="checkAllChatOnly" title="全选（过滤音/图/视/嵌入模型）"></label>
                 </div>
             `;
-            content += `
-                <div class="layui-form-item">
-                    <input type="checkbox" lay-skin="primary" lay-filter="checkAll" title="全选">
-                </div>
-            `;
-            content += `
-                <div class="layui-form-item">
-                    <input type="checkbox" lay-skin="primary" lay-filter="checkAllChatOnly" title="全选（过滤音/图/视/嵌入模型）">
-                </div>
-            `;
+            content += '<div id="modelList">';
             models.forEach((model, index) => {
                 content += `
-                        <div class="layui-form-item">
-                            <input type="checkbox" name="models[${index}]" value="${model}" title="${model}" lay-skin="primary">
-                        </div>
-                    `;
-
-
+                    <div class="layui-form-item model-item" data-model="${model}">
+                        <input type="checkbox" name="models[${index}]" value="${model}" title="${model}" lay-skin="primary">
+                    </div>
+                `;
             });
-            content += '</form></div>';
-
+            content += '</div></form></div>';
 
             layer.open({
                 type: 1,
                 title: '选择模型',
                 content: content,
-                area: ['300px', '400px'],
+                area: ['400px', '550px'],
                 btn: ['确定', '取消'],
                 success: function (layero, index) {
                     form.render('checkbox');
-                    form.on('checkbox', function (data) {
-                        updateSelectedCount(layero);
-                    });
-                    // 监听全选按钮
-                    form.on('checkbox(checkAll)', function (data) {
-                        var child = layero.find('input[type="checkbox"]').not(data.elem);
-                        const prefix = document.getElementById('prefixFilter').value.trim();
-
-                        child.each(function (index, item) {
-                            if (!prefix || item.value.startsWith(prefix)) {
-                                item.checked = data.elem.checked;
-                            } else {
-                                item.checked = false;
-                            }
-                        });
-
-                        form.render('checkbox');
-                        updateSelectedCount(layero);
-                    });
-
-                    // 监听全选（但不校验非chat模型）按钮
-                    form.on('checkbox(checkAllChatOnly)', function (data) {
-                        var child = layero.find('input[type="checkbox"]').not(data.elem);
-                        const notChatPattern = /^(dall|mj|midjourney|stable-diffusion|playground|flux|swap_face|tts|whisper|text|emb|luma|vidu|pdf|suno|pika|chirp|domo|runway|cogvideo)/;
-                        const prefix = document.getElementById('prefixFilter').value.trim();
-
-                        child.each(function (index, item) {
-                            const modelName = item.value;
-                            if ((!notChatPattern.test(modelName) && !/(image|audio|video|music|pdf|flux|suno|embed)/.test(modelName)) && (!prefix || modelName.startsWith(prefix))) {
-                                item.checked = data.elem.checked;
-                            } else {
-                                item.checked = false;
-                            }
-                        });
-
-                        form.render('checkbox');
-                        updateSelectedCount(layero);
-                    });
-
-                    // 监听文本框输入变化
-                    document.getElementById('prefixFilter').addEventListener('input', function () {
-                        const prefix = this.value.trim();
-                        var child = layero.find('.model-item');
-
-                        child.each(function (index, item) {
-                            const checkbox = item.querySelector('input[type="checkbox"]');
-                            if (!prefix || checkbox.value.startsWith(prefix)) {
-                                item.style.display = '';
-                            } else {
-                                item.style.display = 'none';
-                            }
-                        });
-
-                        // 确保全选按钮始终显示
-                        layero.find('.layui-form-item').slice(0, 2).each(function (index, item) {
-                            item.style.display = '';
-                        });
-
-                        updateSelectedCount(layero);
-                    });
-
-                    // 更新已选择的模型数量
-                    form.on('checkbox', function (data) {
-                        updateSelectedCount(layero);
-                    });
+                    setupEventListeners(layero, form);
                 },
                 yes: function (index, layero) {
                     const selectedModels = layero.find('input[name^="models"]:checked').map(function () {
@@ -441,16 +468,96 @@
         });
     }
 
+    function setupEventListeners(layero, form) {
+        form.on('checkbox', function (data) {
+            updateSelectedCount(layero);
+        });
+
+        form.on('checkbox(checkAll)', function (data) {
+            let child = layero.find('input[name^="models"]');
+            child.each(function (index, item) {
+                item.checked = data.elem.checked;
+            });
+            form.render('checkbox');
+            updateSelectedCount(layero);
+            layero.find('input[lay-filter="checkAllChatOnly"]').prop('checked', false);
+        });
+
+        form.on('checkbox(checkAllChatOnly)', function (data) {
+            const child = layero.find('input[name^="models"]');
+            const notChatPattern = /^(dall|mj|midjourney|stable-diffusion|playground|flux|swap_face|tts|whisper|text|emb|luma|vidu|pdf|suno|pika|chirp|domo|runway|cogvideo)/;
+            child.each(function (index, item) {
+                const modelName = item.value;
+                item.checked = data.elem.checked && !notChatPattern.test(modelName) && !/(image|audio|video|music|pdf|flux|suno|embed)/.test(modelName);
+            });
+            form.render('checkbox');
+            updateSelectedCount(layero);
+            layero.find('input[lay-filter="checkAll"]').prop('checked', false);
+        });
+    }
+
+    function filterModels() {
+        const prefix = document.getElementById('prefixFilter').value.trim().toLowerCase();
+        const modelItems = document.querySelectorAll('.model-item');
+        const modelList = document.getElementById('modelList');
+
+        const matchedModels = [];
+        const unmatchedModels = [];
+
+        modelItems.forEach(item => {
+            const model = item.getAttribute('data-model').toLowerCase();
+            if (model.startsWith(prefix)) {
+                matchedModels.push(item);
+            } else {
+                unmatchedModels.push(item);
+            }
+        });
+
+
+        matchedModels.forEach(item => {
+            modelList.insertBefore(item, modelList.firstChild);
+            item.querySelector('input[type="checkbox"]').checked = true;
+        });
+
+        unmatchedModels.forEach(item => {
+            modelList.appendChild(item);
+        });
+
+        layui.form.render('checkbox');
+        let count = matchedModels.length;
+        updateSelectedCount2(count);
+    }
+
+    function clearFilter() {
+        document.getElementById('prefixFilter').value = '';
+        const modelItems = document.querySelectorAll('.model-item');
+        const modelList = document.getElementById('modelList');
+
+        modelItems.forEach(item => {
+            item.querySelector('input[type="checkbox"]').checked = false;
+            modelList.appendChild(item);
+        });
+
+        layui.form.render('checkbox');
+        updateSelectedCount2(0);
+    }
+
+
     // 更新已选择的模型数量
     function updateSelectedCount(layero) {
         const selectedCount = layero.find('input[name^="models"]:checked').length;
         layero.find('#selectedCount').text(`已选择 ${selectedCount} 个模型`);
     }
 
+    function updateSelectedCount2(count) {
+        document.querySelector('#selectedCount').innerText = `已选择 ${count} 个模型`;
+    }
+
     let results = {
         valid: [],
         invalid: [],
         inconsistent: [],
+        awaitOfficialVerification: []
     };
 
     async function testModels() {
@@ -458,8 +565,9 @@
             valid: [],
             invalid: [],
             inconsistent: [],
+            awaitOfficialVerification: []
         };
-        const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');;
+        const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');
         const apiKey = document.getElementById('api_key').value;
         const modelNames = document.getElementById('model_name').value.split(',').map(m => m.trim()).filter(m => m);
         const timeout = parseInt(document.getElementById('model_timeout').value) * 1000; // 转换为毫秒
@@ -467,7 +575,7 @@
 
         if (modelNames.length === 0) {
             layui.use('layer', function () {
-                var layer = layui.layer;
+                const layer = layui.layer;
 
                 layer.alert('请输入至少一个模型名称或从列表中选择模型');
             });
@@ -475,7 +583,7 @@
         }
 
         layui.use('layer', function () {
-            var layer = layui.layer;
+            let layer = layui.layer;
             layer.load();
 
 
@@ -484,18 +592,22 @@
                 const id = setTimeout(() => controller.abort(), timeout);
                 const startTime = Date.now();
 
-                var response_text;
+                let response_text;
                 try {
+                    const requestBody = {
+                        model: model,
+                        messages: [{role: "user", content: "写一个10个字的冷笑话"}]
+                    };
+                    if (model.startsWith('gpt-')) {
+                        requestBody.seed = 331;
+                    }
                     const response = await fetch(`${apiUrl}/v1/chat/completions`, {
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${apiKey}`,
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({
-                            model: model,
-                            messages: [{role: "user", content: "Say this is a test!"}]
-                        }),
+                        body: JSON.stringify(requestBody),
                         signal: controller.signal
                     });
 
@@ -507,6 +619,14 @@
                         const returnedModel = data.model;
                         if (returnedModel === model) {
                             results.valid.push({model, responseTime});
+                            if (model.startsWith('gpt-')) {
+                                if (data.system_fingerprint) {
+                                    results.awaitOfficialVerification.push({
+                                        model,
+                                        system_fingerprint: data.system_fingerprint
+                                    });
+                                }
+                            }
                             console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型一致，响应时间：${responseTime.toFixed(2)} 秒`);
                         } else {
                             results.inconsistent.push({model, returnedModel, responseTime});
@@ -569,7 +689,7 @@
         const totalCount = validCount + inconsistentCount + invalidCount;
 
         layui.use('layer', function () {
-            var layer = layui.layer;
+            const layer = layui.layer;
             layer.alert(`测试总结：<br>
                     总共测试了 ${totalCount} 个模型<br>
                     其中：<br>
@@ -585,8 +705,8 @@
     // 显示测试结果
     // 显示测试结果
     function displayResults(results) {
-        var resultsDiv = document.getElementById('results');
-        var content = '<h2>测试结果</h2>' +
+        const resultsDiv = document.getElementById('results');
+        let content = '<h2>测试结果</h2>' +
             '<div class="copy-buttons">' +
             '<div className="submit-container">' +
             '<button class="check-quota copy-btn" onclick="copyConsistentModels()">复制一致模型</button>' +
@@ -606,14 +726,19 @@
             content += '<tr>' +
                 '<td class="td1 td1-ok">模型一致可用</td>' +
                 '<td class="td2"><span class="copy-btn2"" onclick="copyText(\'' + r.model + '\')">' + r.model + '</span></td>' +
-                '<td class="td3">' + r.responseTime.toFixed(2) + '</td>' +
-                '<td class="td4">good</td>' +
-                '</tr>';
+                '<td class="td3">' + r.responseTime.toFixed(2) + '</td>'
+
+            let verifyButton = '';
+            if (r.model.startsWith('gpt-')) {
+                let buttonClass = results.awaitOfficialVerification.some(item => item.model === r.model) ? 'green' : 'yellow';
+                verifyButton = '<button class="verify-btn ' + buttonClass + '" onclick="verifyOfficial(\'' + r.model + '\')">官转验证</button>';
+            }
+            content += '<td class="td4">' + verifyButton + '</td>'
         });
 
         results.inconsistent.forEach(function (r) {
             content += '<tr>' +
-                '<td class="td1 td1-no" >模型名称不一致，掺假或映射？</td>' +
+                '<td class="td1 td1-no" >模型不一致/映射，tnnd掺假？</td>' +
                 '<td class="td2"><span class="copy-btn2"" onclick="copyText(\'' + r.model + '\')">' + r.model + '</span></td>' +
                 '<td class="td3">' + r.responseTime.toFixed(2) + '</td>' +
                 '<td class="td4">返回模型: ' + r.returnedModel + '</td>' +
@@ -622,7 +747,7 @@
 
         results.invalid.forEach(function (r) {
             content += '<tr>' +
-                '<td class="td1 td1-error">模型不可用！！！</td>' +
+                '<td class="td1 td1-error">模型不可用!!!，干啥呢</td>' +
                 '<td class="td2"><span class="copy-btn2" onclick="copyText(\'' + r.model + '\')">' + r.model + '</span></td>' +
                 '<td class="td3">-</td>' +
                 '<td class="td4">' + (r.response_text || r.error) + '</td>' +
@@ -633,11 +758,186 @@
         resultsDiv.innerHTML = content;
     }
 
+    async function verifyOfficial(model) {
+        layui.use('layer', function () {
+            const layer = layui.layer;
+            layer.prompt({
+                formType: 0,
+                value: '888',
+                title: '请输入seed值 (1-900)',
+                area: ['300px', '50px']
+            }, function (seed, index) {
+                layer.close(index);
+                performOfficialVerification(model, parseInt(seed));
+
+            });
+        });
+    }
+
+    async function performOfficialVerification(model, seed) {
+        layui.use('layer', function () {
+            const layer = layui.layer;
+            layer.load();
+        });
+
+        try {
+            const results = await Promise.all([1, 2, 3, 4].map(() => sendVerificationRequest(model, seed)));
+            const texts = [];
+            const fingerprints = [];
+
+            for (let i = 0; i < results.length; i++) {
+                if (results[i].error) {
+                    console.error(`Error in request ${i + 1}:`, results[i].error);
+                    layui.use('layer', function () {
+                        const layer = layui.layer;
+                        layer.closeAll('loading');
+                        layer.alert(`请求 ${i + 1} 失败: ${results[i].error}`, {title: '错误'});
+                    });
+                    return;
+                }
+                if (!results[i].choices?.[0]?.message?.content) {
+                    console.error(`Invalid response structure in request ${i + 1}:`, results[i]);
+                    layui.use('layer', function () {
+                        const layer = layui.layer;
+                        layer.closeAll('loading');
+                        layer.alert(`请求 ${i + 1} 返回的数据结构无效`, {title: '错误'});
+                    });
+                    return;
+                }
+                texts.push(results[i].choices[0].message.content);
+                fingerprints.push(results[i].system_fingerprint || 'N/A');
+            }
+
+            const similarity = compareTextSimilarity(texts[0], texts[1], texts[2], texts[3]);
+
+            layui.use('layer', function () {
+                api_url = document.getElementById('api_url').value;
+                const layer = layui.layer;
+                layer.closeAll('loading');
+                if (api_url === "https://api.openai.com") {
+                    layer.alert("官方API你来验证？", {title: '官方API'});
+                }
+                let similarityCount = Object.values(similarity).filter(value => parseFloat(value) > 0.6).length;
+                let lowSimilarityCount = Object.values(similarity).filter(value => parseFloat(value) < 0.1).length;
+
+                let title = '验证结果';
+                let message = '';
+                if (similarityCount >= 3) {
+                    title = '恭喜你，官方API呀！';
+                    message += '<strong>Tips: 这是官方API！</strong>';
+                } else if (similarityCount >= 2) {
+                    title = '可能是官方API';
+                    message += '<strong>Tips: 应该是官方的</strong>';
+                } else if (lowSimilarityCount >= 2) {
+                    title = '可能是假的';
+                    message += '<strong>Tips: 假的8</strong>';
+                } else {
+                    message += '<strong>Tips: 结果不确定，请进一步验证</strong>';
+                }
+
+                message += '<table style="width:100%; border-collapse: collapse; margin-bottom: 20px;">' +
+                    '<tr><th style="border: 1px solid #ddd; padding: 8px;">测试</th><th style="border: 1px solid #ddd; padding: 8px;">文本</th><th style="border: 1px solid #ddd; padding: 8px;">系统指纹</th></tr>';
+
+                for (let i = 0; i < 4; i++) {
+                    message += '<tr>' +
+                        '<td style="border: 1px solid #ddd; padding: 8px;">测试 ' + (i + 1) + '</td>' +
+                        '<td style="border: 1px solid #ddd; padding: 8px;">' + texts[i] + '</td>' +
+                        '<td style="border: 1px solid #ddd; padding: 8px;">' + fingerprints[i] + '</td>' +
+                        '</tr>';
+                }
+
+                message += '</table>';
+
+                message += '相似度结果：<br>' +
+                    Object.entries(similarity).map(([key, value]) => `${key}: ${value}`).join('<br>');
+
+
+                layer.alert(message, {title: title, area: ['600px', '400px']});
+            });
+        } catch (error) {
+            console.error('Error in performOfficialVerification:', error);
+            layui.use('layer', function () {
+                const layer = layui.layer;
+                layer.closeAll('loading');
+                layer.alert('验证过程中发生错误: ' + error.message, {title: '错误'});
+            });
+        }
+    }
+
+    async function sendVerificationRequest(model, seed) {
+        const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');
+        const apiKey = document.getElementById('api_key').value;
+        try {
+            const response = await fetch(`${apiUrl}/v1/chat/completions`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    messages: [
+                        {
+                            role: "user",
+                            content: "写一个10个字的冷笑话"
+                        }
+                    ],
+                    seed: seed,
+                    temperature: 0.7,
+                    model: model
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error in sendVerificationRequest:', error);
+            return {error: error.message};
+        }
+    }
+
+
+    function compareTextSimilarity(text1, text2, text3, text4) {
+        function calculateSimilarity(str1, str2) {
+            const len1 = str1.length;
+            const len2 = str2.length;
+            const matrix = Array(len1 + 1).fill().map(() => Array(len2 + 1).fill(0));
+
+            for (let i = 0; i <= len1; i++) matrix[i][0] = i;
+            for (let j = 0; j <= len2; j++) matrix[0][j] = j;
+
+            for (let i = 1; i <= len1; i++) {
+                for (let j = 1; j <= len2; j++) {
+                    const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j - 1] + cost
+                    );
+                }
+            }
+
+            return 1 - matrix[len1][len2] / Math.max(len1, len2);
+        }
+
+        return {
+            similarity12: calculateSimilarity(text1, text2).toFixed(4),
+            similarity13: calculateSimilarity(text1, text3).toFixed(4),
+            similarity14: calculateSimilarity(text1, text4).toFixed(4),
+            similarity23: calculateSimilarity(text2, text3).toFixed(4),
+            similarity24: calculateSimilarity(text2, text4).toFixed(4),
+            similarity34: calculateSimilarity(text3, text4).toFixed(4)
+        };
+    }
+
+
     // 复制文本功能
     function copyText(text) {
         navigator.clipboard.writeText(text).then(() => {
             layui.use('layer', function () {
-                var layer = layui.layer;
+                const layer = layui.layer;
                 layer.msg('模型名已复制到剪贴板');
             });
         }).catch(err => {
@@ -648,11 +948,11 @@
 
     // 检查额度
     function checkQuota() {
-        const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');;
+        const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');
         const apiKey = document.getElementById('api_key').value;
 
         layui.use('layer', function () {
-            var layer = layui.layer;
+            const layer = layui.layer;
             layer.load();
 
             let quotaInfo, usedInfo, remainInfo;
@@ -709,7 +1009,7 @@
 
     // 复制一致模型
     function copyConsistentModels() {
-        var models = results.valid.map(function (r) {
+        const models = results.valid.map(function (r) {
             return r.model;
         });
         copyText(models.join(','));
@@ -717,26 +1017,26 @@
 
     // 复制所有可用模型去重
     function copyConsistentAndInconsistentModels() {
-        var models = results.valid.map(function (r) {
+        const models = results.valid.map(function (r) {
             return r.model;
         })
             .concat(results.inconsistent.map(function (r) {
                 return r.model;
             }));
-        var uniqueModels = Array.from(new Set(models)); // 去重
+        const uniqueModels = Array.from(new Set(models)); // 去重
         copyText(uniqueModels.join(','));
     }
 
 
     // 复制一致和不一致模型的原始模型的函数名称 去重
     function copyConsistentAndInconsistentReturedModels() {
-        var models = results.valid.map(function (r) {
+        const models = results.valid.map(function (r) {
             return r.model;
         })
             .concat(results.inconsistent.map(function (r) {
                 return r.returnedModel;
             }));
-        var uniqueModels = Array.from(new Set(models)); // 去重
+        let uniqueModels = Array.from(new Set(models)); // 去重
         //去除undefined
         uniqueModels = uniqueModels.filter(function (s) {
             return s && s.trim();
