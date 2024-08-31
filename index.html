@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API 信息测活</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://openai.com/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/layui/2.6.8/css/layui.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/layui/2.6.8/layui.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .response-container {
+            width: 100%;
+            margin: 20px auto 0;
+            max-width: 1000px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        .submit-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .submit-container input[type="button"], .copy-btn {
+            width: 30%;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .copy-btn {
+            margin-left: 10%;
+            width: 20%;
+        }
+
+        .copy-btn2 {
+            width: 20%;
+        }
+
+        .submit-query {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .check-quota {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .clear-form {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .model-input-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .model-input-container textarea[type="text"] {
+            width: 70%;
+            height: 200px;
+            margin-right: 10px;
+        }
+
+        .model-input-container input[type="button"] {
+            width: 28%;
+            background-color: #fe9307;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        h1 {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        h2, h3 {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 20px;
+        }
+
+
+        .response-container pre {
+            white-space: pre-wrap;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+        }
+
+        .model-timeout-concurrency {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .model-timeout, .model-concurrency {
+            width: 48%;
+        }
+
+        .model-timeout input, .model-concurrency input {
+            width: 100%;
+        }
+
+        table {
+            width: 90%; /* 或任何其他固定宽度 */
+            margin-left: auto;
+            margin-right: auto;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+
+        h1, h2 {
+            color: #007bff;
+            text-align: center;
+        }
+
+        .td1 {
+            width: 250px;
+        }
+
+        .td1-ok {
+            color: green;
+        }
+
+        .td1-no {
+            color: coral;
+        }
+
+        .td1-error {
+            color: red;
+        }
+
+        .td2 {
+            width: 200px;
+        }
+
+        .td4 {
+            max-width: 350px;
+            max-height: 100px;
+        }
+
+        /* 可以根据需要为 td3 添加样式 */
+        .td3 {
+            width: 100px; /* 或者设置一个具体的宽度 */
+        }
+
+        .copy-buttons {
+            margin: 10px 0;
+        }
+
+        .copyright {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .copyright img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        .copyright a {
+            color: #1e88e5;
+            text-decoration: none;
+        }
+
+        .copyright a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>API 信息测活</h1>
+    <h3>（适配 oneapi/newapi 等中转格式）</h3>
+
+    <form id="apiForm">
+            <textarea id="api_info" name="api_info"
+                      placeholder="懒人专用文本框，支持同时粘贴接口地址和密钥，智能提取，如：https://api.openai.com，sk-TodayIsThursdayVme50ForKFC"></textarea>
+        <input type="text" id="api_url" name="api_url" placeholder="接口地址，如：https://api.openai.com" value="">
+        <input type="text" id="api_key" name="api_key" placeholder="密钥，如：sk-TodayIsThursdayVme50ForKFC" value="">
+        <div class="model-input-container" id="model-input-container">
+            <textarea type="text" id="model_name" name="model_name" placeholder="支持手动填入测试模型名称，用英文逗号分隔多个模型"></textarea>
+            <input type="button" value="获取模型列表" style="height: 50px" onclick="getModelList()">
+        </div>
+        <div id="modelCheckboxes"></div>
+        <div class="model-timeout-concurrency">
+            <div class="model-timeout">
+                <label for="model_timeout">设置请求超时(秒):</label>
+                <input type="number" style="height: 30px;width: 70px" id="model_timeout" name="model_timeout" value="10"
+                       min="1">
+            </div>
+            <div class="model-concurrency" style="height: 50px">
+                <label for="model_concurrency">设置请求并发数量:</label>
+                <input type="number" style="height: 30px;width: 70px" id="model_concurrency" name="model_concurrency"
+                       value="5" min="1">
+            </div>
+        </div>
+        <div class="submit-container">
+            <input type="button" value="测试模型" onclick="testModels()" class="submit-query">
+            <input type="button" value="检查额度" onclick="checkQuota()" class="check-quota">
+            <input type="button" value="清空表单" onclick="clearForm()" class="clear-form">
+        </div>
+    </form>
+</div>
+<div class="copyright">
+    <!--    不要删除感谢 Rick 和 Megasoft 的贡献-->
+    <p> © 2024 linuxdo 版权所有<br>贡献者：<a href="https://linux.do/u/rick" target="_blank"><img
+            src="https://linux.do/user_avatar/linux.do/rick/288/137821_2.png" alt="rick">rick </a>和<a
+            href="https://linux.do/u/zhong_little" target="_blank"><img
+            src="https://linux.do/user_avatar/linux.do/zhong_little/288/104887_2.png" alt="Megasoft">Megasoft</a></p>
+</div>
+<div id="results" class="response-container"></div>
+
+<script>
+    // 智能提取API信息
+    document.getElementById('api_info').addEventListener('input', function () {
+        let text = this.value;
+        let urlPattern = /(https?:\/\/[^\s，。、！,；;\n]+)/;
+        let keyPattern = /(sk-[a-zA-Z0-9]+)/;
+
+        let urlMatch = text.match(urlPattern);
+        let keyMatch = text.match(keyPattern);
+
+        if (urlMatch) {
+            //去除末尾/后的空格 其他字符 保留到最后一个/前面
+            let cleanUrl = urlMatch[0].match(/(.*)\/.*/)[1];
+            //如果. 存在则使用
+            if (cleanUrl.includes('.')) {
+                document.getElementById('api_url').value = cleanUrl;
+                console.log(cleanUrl);
+            } else {
+                document.getElementById('api_url').value = urlMatch[0];
+                console.log(urlMatch[0]);
+            }
+        }
+        if (keyMatch) {
+            document.getElementById('api_key').value = keyMatch[0];
+        }
+    });
+
+    function getModelList() {
+        const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');;
+        const apiKey = document.getElementById('api_key').value;
+        console.log(apiUrl, apiKey);
+
+        layui.use('layer', function () {
+            var layer = layui.layer;
+
+            layer.load();
+            fetch(`${apiUrl}/v1/models`, {
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    layer.closeAll('loading');
+                    const models = data.data.map(model => model.id);
+                    models.sort();
+                    displayModelCheckboxes(models);
+                })
+                .catch(error => {
+                    layer.closeAll('loading');
+                    layer.alert('获取模型列表失败: ' + error.message);
+                });
+        });
+    }
+
+    // 显示模型复选框
+    function displayModelCheckboxes(models) {
+        layui.use(['layer', 'form'], function () {
+            var layer = layui.layer;
+            var form = layui.form;
+
+            let content = '<div style="padding: 20px;"><form class="layui-form">';
+            content += '<div id="selectedCount">已选择 0 个模型</div>';
+            content += `
+                <div class="layui-form-item ">
+                    <input type="text" id="prefixFilter" placeholder="指定模型前缀，如：gpt" style="margin-left: 10px; width: 200px;">
+                </div>
+            `;
+            content += `
+                <div class="layui-form-item">
+                    <input type="checkbox" lay-skin="primary" lay-filter="checkAll" title="全选">
+                </div>
+            `;
+            content += `
+                <div class="layui-form-item">
+                    <input type="checkbox" lay-skin="primary" lay-filter="checkAllChatOnly" title="全选（过滤音/图/视/嵌入模型）">
+                </div>
+            `;
+            models.forEach((model, index) => {
+                content += `
+                        <div class="layui-form-item">
+                            <input type="checkbox" name="models[${index}]" value="${model}" title="${model}" lay-skin="primary">
+                        </div>
+                    `;
+
+
+            });
+            content += '</form></div>';
+
+
+            layer.open({
+                type: 1,
+                title: '选择模型',
+                content: content,
+                area: ['300px', '400px'],
+                btn: ['确定', '取消'],
+                success: function (layero, index) {
+                    form.render('checkbox');
+                    form.on('checkbox', function (data) {
+                        updateSelectedCount(layero);
+                    });
+                    // 监听全选按钮
+                    form.on('checkbox(checkAll)', function (data) {
+                        var child = layero.find('input[type="checkbox"]').not(data.elem);
+                        const prefix = document.getElementById('prefixFilter').value.trim();
+
+                        child.each(function (index, item) {
+                            if (!prefix || item.value.startsWith(prefix)) {
+                                item.checked = data.elem.checked;
+                            } else {
+                                item.checked = false;
+                            }
+                        });
+
+                        form.render('checkbox');
+                        updateSelectedCount(layero);
+                    });
+
+                    // 监听全选（但不校验非chat模型）按钮
+                    form.on('checkbox(checkAllChatOnly)', function (data) {
+                        var child = layero.find('input[type="checkbox"]').not(data.elem);
+                        const notChatPattern = /^(dall|mj|midjourney|stable-diffusion|playground|flux|swap_face|tts|whisper|text|emb|luma|vidu|pdf|suno|pika|chirp|domo|runway|cogvideo)/;
+                        const prefix = document.getElementById('prefixFilter').value.trim();
+
+                        child.each(function (index, item) {
+                            const modelName = item.value;
+                            if ((!notChatPattern.test(modelName) && !/(image|audio|video|music|pdf|flux|suno|embed)/.test(modelName)) && (!prefix || modelName.startsWith(prefix))) {
+                                item.checked = data.elem.checked;
+                            } else {
+                                item.checked = false;
+                            }
+                        });
+
+                        form.render('checkbox');
+                        updateSelectedCount(layero);
+                    });
+
+                    // 监听文本框输入变化
+                    document.getElementById('prefixFilter').addEventListener('input', function () {
+                        const prefix = this.value.trim();
+                        var child = layero.find('.model-item');
+
+                        child.each(function (index, item) {
+                            const checkbox = item.querySelector('input[type="checkbox"]');
+                            if (!prefix || checkbox.value.startsWith(prefix)) {
+                                item.style.display = '';
+                            } else {
+                                item.style.display = 'none';
+                            }
+                        });
+
+                        // 确保全选按钮始终显示
+                        layero.find('.layui-form-item').slice(0, 2).each(function (index, item) {
+                            item.style.display = '';
+                        });
+
+                        updateSelectedCount(layero);
+                    });
+
+                    // 更新已选择的模型数量
+                    form.on('checkbox', function (data) {
+                        updateSelectedCount(layero);
+                    });
+                },
+                yes: function (index, layero) {
+                    const selectedModels = layero.find('input[name^="models"]:checked').map(function () {
+                        return this.value;
+                    }).get();
+                    document.getElementById('model_name').value = selectedModels.join(',');
+                    layer.close(index);
+                }
+            });
+        });
+    }
+
+    // 更新已选择的模型数量
+    function updateSelectedCount(layero) {
+        const selectedCount = layero.find('input[name^="models"]:checked').length;
+        layero.find('#selectedCount').text(`已选择 ${selectedCount} 个模型`);
+    }
+
+    let results = {
+        valid: [],
+        invalid: [],
+        inconsistent: [],
+    };
+
+    async function testModels() {
+        results = {
+            valid: [],
+            invalid: [],
+            inconsistent: [],
+        };
+        const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');;
+        const apiKey = document.getElementById('api_key').value;
+        const modelNames = document.getElementById('model_name').value.split(',').map(m => m.trim()).filter(m => m);
+        const timeout = parseInt(document.getElementById('model_timeout').value) * 1000; // 转换为毫秒
+        const concurrency = parseInt(document.getElementById('model_concurrency').value);
+
+        if (modelNames.length === 0) {
+            layui.use('layer', function () {
+                var layer = layui.layer;
+
+                layer.alert('请输入至少一个模型名称或从列表中选择模型');
+            });
+            return;
+        }
+
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.load();
+
+
+            async function testModel(model) {
+                const controller = new AbortController();
+                const id = setTimeout(() => controller.abort(), timeout);
+                const startTime = Date.now();
+
+                var response_text;
+                try {
+                    const response = await fetch(`${apiUrl}/v1/chat/completions`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${apiKey}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: model,
+                            messages: [{role: "user", content: "Say this is a test!"}]
+                        }),
+                        signal: controller.signal
+                    });
+
+                    const endTime = Date.now();
+                    const responseTime = (endTime - startTime) / 1000; // 转换为秒
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        const returnedModel = data.model;
+                        if (returnedModel === model) {
+                            results.valid.push({model, responseTime});
+                            console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型一致，响应时间：${responseTime.toFixed(2)} 秒`);
+                        } else {
+                            results.inconsistent.push({model, returnedModel, responseTime});
+                            console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不一致，期望：${model}，实际：${returnedModel}，响应时间：${responseTime.toFixed(2)} 秒`);
+                        }
+                    } else {
+                        try {
+                            const jsonResponse = await response.json();
+                            response_text = jsonResponse.error.message;
+                        } catch (jsonError) {
+                            try {
+                                response_text = await response.text();
+                            } catch (textError) {
+                                response_text = '无法解析响应内容';
+                            }
+                        }
+                        results.invalid.push({model, response_text})
+                        console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不可用，响应：${response.status} ${response.statusText} ${response_text}`);
+                    }
+                } catch (error) {
+                    if (error.name === 'AbortError') {
+                        results.invalid.push({model, error: '超时'});
+                        console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不可用（超时）`);
+                    } else {
+                        results.invalid.push({model, error: error.message});
+                        console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不可用，错误：${error.message}`);
+                    }
+                } finally {
+                    clearTimeout(id);
+                }
+            }
+
+            async function runBatch(models) {
+                const promises = models.map(model => testModel(model));
+                await Promise.all(promises);
+            }
+
+            async function runAllTests() {
+                for (let i = 0; i < modelNames.length; i += concurrency) {
+                    const batch = modelNames.slice(i, i + concurrency);
+                    await runBatch(batch);
+                }
+
+                layer.closeAll('loading');
+                displayResults(results);
+                showSummary(results);
+            }
+
+            runAllTests().catch(error => {
+                layer.closeAll('loading');
+                layer.alert('测试模型时发生错误: ' + error.message);
+            });
+        });
+    }
+
+    function showSummary(results) {
+        const validCount = results.valid.length;
+        const inconsistentCount = results.inconsistent.length;
+        const invalidCount = results.invalid.length;
+        const totalCount = validCount + inconsistentCount + invalidCount;
+
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.alert(`测试总结：<br>
+                    总共测试了 ${totalCount} 个模型<br>
+                    其中：<br>
+                    - ${validCount} 个模型可用且一致<br>
+                    - ${inconsistentCount} 个模型可用但不一致<br>
+                    - ${invalidCount} 个模型不可用`,
+                {title: '测试结果总结'}
+            );
+        });
+    }
+
+
+    // 显示测试结果
+    // 显示测试结果
+    function displayResults(results) {
+        var resultsDiv = document.getElementById('results');
+        var content = '<h2>测试结果</h2>' +
+            '<div class="copy-buttons">' +
+            '<div className="submit-container">' +
+            '<button class="check-quota copy-btn" onclick="copyConsistentModels()">复制一致模型</button>' +
+            '<button class="check-quota copy-btn" onclick="copyConsistentAndInconsistentModels()">复制可用模型</button>' +
+            '<button class="check-quota copy-btn"onclick="copyConsistentAndInconsistentReturedModels()">复制可用用原始模型</button>' +
+            '</div>' +
+            '</div>' +
+            '<table>' +
+            '<tr>' +
+            '<th class="td1">状态</th>' +
+            '<th class="td2">模型名称</th>' +
+            '<th class="td3">响应时间 (秒)</th>' +
+            '<th class="td4">备注</th>' +
+            '</tr>';
+
+        results.valid.forEach(function (r) {
+            content += '<tr>' +
+                '<td class="td1 td1-ok">模型一致可用</td>' +
+                '<td class="td2"><span class="copy-btn2"" onclick="copyText(\'' + r.model + '\')">' + r.model + '</span></td>' +
+                '<td class="td3">' + r.responseTime.toFixed(2) + '</td>' +
+                '<td class="td4">good</td>' +
+                '</tr>';
+        });
+
+        results.inconsistent.forEach(function (r) {
+            content += '<tr>' +
+                '<td class="td1 td1-no" >模型名称不一致，掺假或映射？</td>' +
+                '<td class="td2"><span class="copy-btn2"" onclick="copyText(\'' + r.model + '\')">' + r.model + '</span></td>' +
+                '<td class="td3">' + r.responseTime.toFixed(2) + '</td>' +
+                '<td class="td4">返回模型: ' + r.returnedModel + '</td>' +
+                '</tr>';
+        });
+
+        results.invalid.forEach(function (r) {
+            content += '<tr>' +
+                '<td class="td1 td1-error">模型不可用！！！</td>' +
+                '<td class="td2"><span class="copy-btn2" onclick="copyText(\'' + r.model + '\')">' + r.model + '</span></td>' +
+                '<td class="td3">-</td>' +
+                '<td class="td4">' + (r.response_text || r.error) + '</td>' +
+                '</tr>';
+        });
+
+        content += '</table>';
+        resultsDiv.innerHTML = content;
+    }
+
+    // 复制文本功能
+    function copyText(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            layui.use('layer', function () {
+                var layer = layui.layer;
+                layer.msg('模型名已复制到剪贴板');
+            });
+        }).catch(err => {
+            console.error('复制失败:', err);
+        });
+    }
+
+
+    // 检查额度
+    function checkQuota() {
+        const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');;
+        const apiKey = document.getElementById('api_key').value;
+
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.load();
+
+            let quotaInfo, usedInfo, remainInfo;
+
+            // 获取总额度
+            fetch(`${apiUrl}/dashboard/billing/subscription`, {
+                headers: {'Authorization': `Bearer ${apiKey}`}
+            })
+                .then(response => response.json())
+                .then(quotaData => {
+                    quotaInfo = quotaData.hard_limit_usd ? `${quotaData.hard_limit_usd.toFixed(2)} $` : '无法获得额度信息';
+
+                    // 获取使用情况
+                    const today = new Date();
+                    const year = today.getFullYear();
+                    const month = String(today.getMonth() + 1).padStart(2, '0');
+                    const day = String(today.getDate()).padStart(2, '0');
+                    const startDate = `${year}-${month}-01`;
+                    const endDate = `${year}-${month}-${day}`;
+
+                    return fetch(`${apiUrl}/dashboard/billing/usage?start_date=${startDate}&end_date=${endDate}`, {
+                        headers: {'Authorization': `Bearer ${apiKey}`}
+                    });
+                })
+                .then(response => response.json())
+                .then(usageData => {
+                    usedInfo = `${(usageData.total_usage / 100).toFixed(2)} $`;
+
+                    // 计算剩余额度
+                    const quotaNumber = parseFloat(quotaInfo);
+                    const usedNumber = parseFloat(usedInfo);
+                    if (!isNaN(quotaNumber) && !isNaN(usedNumber)) {
+                        remainInfo = `${(quotaNumber - usedNumber).toFixed(2)} $`;
+                    } else {
+                        remainInfo = '无法计算剩余额度';
+                    }
+
+                    const showInfo = `可用额度为: ${remainInfo}\n\n已用额度为: ${usedInfo}\n\n总额度为: ${quotaInfo}`;
+                    layer.closeAll('loading');
+                    layer.alert(showInfo);
+                })
+                .catch(error => {
+                    layer.closeAll('loading');
+                    layer.alert('检查额度失败: ' + error.message);
+                });
+        });
+    }
+
+    // 清空表单
+    function clearForm() {
+        document.getElementById('apiForm').reset();
+        document.getElementById('results').innerHTML = '';
+    }
+
+    // 复制一致模型
+    function copyConsistentModels() {
+        var models = results.valid.map(function (r) {
+            return r.model;
+        });
+        copyText(models.join(','));
+    }
+
+    // 复制所有可用模型去重
+    function copyConsistentAndInconsistentModels() {
+        var models = results.valid.map(function (r) {
+            return r.model;
+        })
+            .concat(results.inconsistent.map(function (r) {
+                return r.model;
+            }));
+        var uniqueModels = Array.from(new Set(models)); // 去重
+        copyText(uniqueModels.join(','));
+    }
+
+
+    // 复制一致和不一致模型的原始模型的函数名称 去重
+    function copyConsistentAndInconsistentReturedModels() {
+        var models = results.valid.map(function (r) {
+            return r.model;
+        })
+            .concat(results.inconsistent.map(function (r) {
+                return r.returnedModel;
+            }));
+        var uniqueModels = Array.from(new Set(models)); // 去重
+        //去除undefined
+        uniqueModels = uniqueModels.filter(function (s) {
+            return s && s.trim();
+        });
+        copyText(uniqueModels.join(','));
+    }
+
+
+</script>
+</body>
+</html>
