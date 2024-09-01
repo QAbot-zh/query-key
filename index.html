@@ -735,11 +735,12 @@
         });
 
         results.inconsistent.forEach(function (r) {
+
             content += '<tr>' +
                 '<td class="td1 td1-no" >模型不一致/映射，tnnd掺假？</td>' +
                 '<td class="td2"><span class="copy-btn2"" onclick="copyText(\'' + r.model + '\')">' + r.model + '</span></td>' +
                 '<td class="td3">' + r.responseTime.toFixed(2) + '</td>' +
-                '<td class="td4">返回模型: ' + r.returnedModel + '</td>' +
+                '<td class="td4">' + (r.returnedModel ? '返回模型: ' + r.returnedModel : '该接口未返回模型名称') + '</td>' +
                 '</tr>';
         });
 
