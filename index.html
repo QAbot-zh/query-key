@@ -316,6 +316,50 @@
             overflow-y: auto;
         }
 
+        .toast {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 5px;
+            animation: slideIn 0.5s ease-out;
+            max-width: 300px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .toast p {
+            margin: 0;
+        }
+
+        .toast button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #888;
+        }
+
+        .toast button:hover {
+            color: #333;
+        }
+
     </style>
 </head>
 <body>
@@ -355,7 +399,8 @@
 </div>
 <div class="copyright">
     <!--    不要删除 感谢 Rick 和 Megasoft 的贡献-->
-    <p> © 2024 linuxdoer 版权所有<br>贡献者：<a href="https://linux.do/u/rick" target="_blank"><img
+    <p> © 2024 linuxdoer 版权所有<br>点点star 自行部署 <a href="https://github.com/QAbot-zh/query-key" target="_blank">github仓库</a>
+        <br>贡献者：<a href="https://linux.do/u/rick" target="_blank"><img
             src="https://linux.do/user_avatar/linux.do/rick/288/137821_2.png" alt="rick">rick </a>和<a
             href="https://linux.do/u/zhong_little" target="_blank"><img
             src="https://linux.do/user_avatar/linux.do/zhong_little/288/104887_2.png" alt="Megasoft">Megasoft</a></p>
@@ -363,6 +408,43 @@
 <div id="results" class="response-container"></div>
 
 <script>
+    // 显示公告
+    function showToast() {
+        const message = `
+            <div>
+                <p><strong>API CHECKER v1.3</strong></p>
+                <br>
+                <div>仓库地址:  <a href="https://github.com/QAbot-zh/query-key" target="_blank" style="color: #1e88e5">QAbot-zh/query-key</a></div><div>点点star 可以自行部署</div>
+                <br>
+                <p><strong>如何使用 :</strong></p>
+                <ul>
+                    <div>📝 在表单中输入你的API URL和APIKey</div>
+                    <div>🔍 选择名称或输入您想要测试的模型</div>
+                    <div>🖱️ 测试全在本地进行</div>
+                    <div>🎉 等待结果并查看详细报告</div>
+                    <div>🕵️ 使用“官转验证”功能确认API的真实性</div>
+                </ul>
+                <br>
+                <p><strong>版本历史:</strong></p>
+                 <div><a href="https://linux.do/t/topic/191420" target="_blank" style="color: #1e88e5">v1.3版本介绍</a></div>
+                 <div><a href="https://linux.do/t/topic/190955" target="_blank" style="color: #1e88e5">v1.2版本介绍</a></div>
+                 <br>
+                <p><strong>Tips:</strong></p>
+                <div>GPT系列，才有官转验证，系统判断仅供参考，原理请看 <a href="https://linux.do/t/topic/191420" target="_blank" style="color: #1e88e5">v1.3版本介绍</a></div>
+            </div>
+        `;
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `${message}
+                           <button onclick="this.parentElement.style.display='none';" aria-label="close">
+                               <svg aria-hidden="true" viewBox="0 0 14 16" width="14" height="16">
+                                   <path fill-rule="evenodd" d="M7.71 8.23l3.75 3.75-1.48 1.48-3.75-3.75-3.75 3.75L1 11.98l3.75-3.75L1 4.48 2.48 3l3.75 3.75L9.98 3l1.48 1.48-3.75 3.75z"></path>
+                               </svg>
+                           </button>`;
+        document.body.appendChild(toast);
+    }
+
+    showToast();
     // 智能提取API信息
     document.getElementById('api_info').addEventListener('input', function () {
         let text = this.value;
