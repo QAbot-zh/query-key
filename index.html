@@ -889,6 +889,106 @@
         awaitOfficialVerification: []
     };
 
+    function createTransparentCircularProgress() {
+        let canvas, ctx;
+        let total, completed, failed, pending;
+        let animationId;
+
+        function createCanvas() {
+            canvas = document.createElement('canvas');
+            canvas.width = 200;
+            canvas.height = 200;
+            canvas.style.position = 'fixed';
+            canvas.style.top = '50%';
+            canvas.style.left = '50%';
+            canvas.style.transform = 'translate(-50%, -50%)';
+            canvas.style.zIndex = '19891020'; // 确保它在最上层
+            document.body.appendChild(canvas);
+            ctx = canvas.getContext('2d');
+        }
+
+        function drawProgress() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(centerX, centerY) - 10;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 绘制半透明背景
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(240, 240, 240, 0.5)';
+            ctx.fill();
+
+            // 绘制进度
+            const completedAngle = ((completed + failed) / total) * Math.PI * 2;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, -Math.PI / 2, completedAngle - Math.PI / 2);
+            ctx.fillStyle = 'rgba(76, 175, 80, 0.7)';  // 半透明绿色表示已完成
+            ctx.fill();
+
+            const failedAngle = (failed / total) * Math.PI * 2;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, -Math.PI / 2, failedAngle - Math.PI / 2);
+            ctx.fillStyle = 'rgba(244, 67, 54, 0.7)';  // 半透明红色表示失败
+            ctx.fill();
+
+            // 绘制中心圆（表示待处理）
+            const innerRadius = radius * 0.7;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, innerRadius, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 193, 7, 0.7)';  // 半透明黄色表示待处理
+            ctx.fill();
+
+            // 添加文字
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`总计: ${total}`, centerX, centerY - 20);
+            ctx.fillText(`完成: ${completed}`, centerX, centerY);
+            ctx.fillText(`失败: ${failed}`, centerX, centerY + 20);
+            ctx.fillText(`待处理: ${pending}`, centerX, centerY + 40);
+
+            // 添加旋转效果
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(performance.now() / 1000);
+            ctx.beginPath();
+            ctx.moveTo(0, -radius - 5);
+            ctx.lineTo(0, -radius + 5);
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.restore();
+
+            animationId = requestAnimationFrame(drawProgress);
+        }
+
+        return {
+            show: function (totalCount) {
+                createCanvas();
+                total = totalCount;
+                completed = 0;
+                failed = 0;
+                pending = total;
+                drawProgress();
+            },
+            update: function (newCompleted, newFailed) {
+                completed = newCompleted;
+                failed = newFailed;
+                pending = total - completed - failed;
+            },
+            hide: function () {
+                if (canvas) {
+                    document.body.removeChild(canvas);
+                    cancelAnimationFrame(animationId);
+                }
+            }
+        };
+    }
+
     async function testModels() {
         results = {
             valid: [],
@@ -905,107 +1005,113 @@
         if (modelNames.length === 0) {
             layui.use('layer', function () {
                 const layer = layui.layer;
-
                 layer.alert('请输入至少一个模型名称或从列表中选择模型');
             });
             return;
         }
 
-        layui.use('layer', function () {
-            let layer = layui.layer;
-            layer.load();
 
+        const circularProgress = createTransparentCircularProgress();
+        circularProgress.show(modelNames.length);
 
-            async function testModel(model) {
-                const controller = new AbortController();
-                const id = setTimeout(() => controller.abort(), timeout);
-                const startTime = Date.now();
+        let completed = 0;
+        let failed = 0;
 
-                let response_text;
-                try {
-                    const requestBody = {
-                        model: model,
-                        messages: [{role: "user", content: "写一个10个字的冷笑话"}]
-                    };
-                    if (model.startsWith('gpt-')) {
-                        requestBody.seed = 331;
-                    }
-                    const response = await fetch(`${apiUrl}/v1/chat/completions`, {
-                        method: 'POST',
-                        headers: {
-                            'Authorization': `Bearer ${apiKey}`,
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(requestBody),
-                        signal: controller.signal
-                    });
+        async function testModel(model) {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeout);
+            const startTime = Date.now();
 
-                    const endTime = Date.now();
-                    const responseTime = (endTime - startTime) / 1000; // 转换为秒
+            let response_text;
+            try {
+                const requestBody = {
+                    model: model,
+                    messages: [{role: "user", content: "写一个10个字的冷笑话"}]
+                };
+                if (model.startsWith('gpt-')) {
+                    requestBody.seed = 331;
+                }
+                const response = await fetch(`${apiUrl}/v1/chat/completions`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody),
+                    signal: controller.signal
+                });
 
-                    if (response.ok) {
-                        const data = await response.json();
-                        const returnedModel = data.model;
-                        if (returnedModel === model) {
-                            results.valid.push({model, responseTime});
-                            if (model.startsWith('gpt-')) {
-                                if (data.system_fingerprint) {
-                                    results.awaitOfficialVerification.push({
-                                        model,
-                                        system_fingerprint: data.system_fingerprint
-                                    });
-                                }
+                const endTime = Date.now();
+                const responseTime = (endTime - startTime) / 1000; // 转换为秒
+
+                if (response.ok) {
+                    completed++;
+                    const data = await response.json();
+                    const returnedModel = data.model;
+                    if (returnedModel === model) {
+                        results.valid.push({model, responseTime});
+                        if (model.startsWith('gpt-')) {
+                            if (data.system_fingerprint) {
+                                results.awaitOfficialVerification.push({
+                                    model,
+                                    system_fingerprint: data.system_fingerprint
+                                });
                             }
-                            console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型一致，响应时间：${responseTime.toFixed(2)} 秒`);
-                        } else {
-                            results.inconsistent.push({model, returnedModel, responseTime});
-                            console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不一致，期望：${model}，实际：${returnedModel}，响应时间：${responseTime.toFixed(2)} 秒`);
                         }
+                        console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型一致，响应时间：${responseTime.toFixed(2)} 秒`);
                     } else {
+                        results.inconsistent.push({model, returnedModel, responseTime});
+                        console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不一致，期望：${model}，实际：${returnedModel}，响应时间：${responseTime.toFixed(2)} 秒`);
+                    }
+                } else {
+                    failed++;
+                    try {
+                        const jsonResponse = await response.json();
+                        response_text = jsonResponse.error.message;
+                    } catch (jsonError) {
                         try {
-                            const jsonResponse = await response.json();
-                            response_text = jsonResponse.error.message;
-                        } catch (jsonError) {
-                            try {
-                                response_text = await response.text();
-                            } catch (textError) {
-                                response_text = '无法解析响应内容';
-                            }
+                            response_text = await response.text();
+                        } catch (textError) {
+                            response_text = '无法解析响应内容';
                         }
-                        results.invalid.push({model, response_text})
-                        console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不可用，响应：${response.status} ${response.statusText} ${response_text}`);
                     }
-                } catch (error) {
-                    if (error.name === 'AbortError') {
-                        results.invalid.push({model, error: '超时'});
-                        console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不可用（超时）`);
-                    } else {
-                        results.invalid.push({model, error: error.message});
-                        console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不可用，错误：${error.message}`);
-                    }
-                } finally {
-                    clearTimeout(id);
+                    results.invalid.push({model, response_text})
+                    console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不可用，响应：${response.status} ${response.statusText} ${response_text}`);
                 }
-            }
-
-            async function runBatch(models) {
-                const promises = models.map(model => testModel(model));
-                await Promise.all(promises);
-            }
-
-            async function runAllTests() {
-                for (let i = 0; i < modelNames.length; i += concurrency) {
-                    const batch = modelNames.slice(i, i + concurrency);
-                    await runBatch(batch);
+            } catch (error) {
+                failed++;
+                if (error.name === 'AbortError') {
+                    results.invalid.push({model, error: '超时'});
+                    console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不可用（超时）`);
+                } else {
+                    results.invalid.push({model, error: error.message});
+                    console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不可用，错误：${error.message}`);
                 }
+            } finally {
+                circularProgress.update(completed, failed);
+            }
+        }
 
-                layer.closeAll('loading');
-                displayResults(results);
-                showSummary(results);
+        async function runBatch(models) {
+            const promises = models.map(model => testModel(model));
+            await Promise.all(promises);
+        }
+
+        async function runAllTests() {
+            for (let i = 0; i < modelNames.length; i += concurrency) {
+                const batch = modelNames.slice(i, i + concurrency);
+                await runBatch(batch);
             }
 
-            runAllTests().catch(error => {
-                layer.closeAll('loading');
+            circularProgress.hide();
+            displayResults(results);
+            showSummary(results);
+        }
+
+        runAllTests().catch(error => {
+            circularProgress.hide();
+            layui.use('layer', function () {
+                const layer = layui.layer;
                 layer.alert('测试模型时发生错误: ' + error.message);
             });
         });
