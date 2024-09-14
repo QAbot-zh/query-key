@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>API CHECKER</title>
@@ -24,19 +25,117 @@
             top: 0;
             left: 0;
             background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.5s;
             z-index: 998;
         }
 
         .container {
-            width: 0;
+            width: 60%;
             height: 100vh;
             overflow: hidden;
             position: fixed;
             top: 0;
+            left: -300px;
             background-color: #fff;
-            transition: width 0.5s;
+            transition: left 0.5s, opacity 0.5s;
             z-index: 999;
+            opacity: 0;
         }
+
+        .container.show {
+            left: 0;
+            opacity: 1;
+        }
+
+        .overlay.show {
+            display: block;
+            opacity: 1;
+        }
+
+
+        /* 手机端样式调整 */
+        @media (max-width: 768px) {
+            .container {
+                width: 80%;
+                /* 宽度调整为80% */
+            }
+
+            .submit-container input[type="button"],
+            .copy-btn {
+                width: 45%;
+                /* 调整按钮宽度以适应手机屏幕 */
+            }
+
+            .sidebar-toggle {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .copy-buttons {
+                width: 100%;
+                /* 使按钮容器在手机端占满宽度 */
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 5px;
+                /* 调整间距为5px，使其更紧凑 */
+                margin-bottom: 10px;
+                /* 减少底部外边距 */
+            }
+
+            .copy-buttons .submit-container {
+                width: 100%;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .copy-buttons button {
+                width: 100%;
+                margin-bottom: 5px;
+                /* 减少按钮之间的垂直间距 */
+                padding: 8px;
+                /* 调整内边距以适应更小的空间 */
+            }
+
+            /* 调整表格样式 */
+            table {
+                width: 100%;
+                /* 表格在手机端占满宽度 */
+                font-size: 12px;
+                /* 调整字体大小 */
+                overflow-x: auto;
+                /* 启用横向滚动 */
+                display: block;
+                /* 使表格可滚动 */
+                white-space: nowrap;
+                /* 保持单元格内容不换行 */
+            }
+
+            th,
+            td {
+                padding: 8px;
+                /* 减少表格内边距 */
+                text-align: left;
+                /* 保持左对齐 */
+                vertical-align: middle;
+                /* 垂直居中 */
+            }
+
+            /* 调整特定列样式 */
+            .td1,
+            .td2,
+            .td3,
+            .td4 {
+                min-width: 120px;
+                /* 设置单元格的最小宽度 */
+                word-break: break-word;
+                /* 长内容换行 */
+            }
+
+        }
+
 
         #apiForm {
             margin: 0 3%;
@@ -47,7 +146,9 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        #apiForm input[type="text"], #apiForm input[type="number"], #apiForm textarea {
+        #apiForm input[type="text"],
+        #apiForm input[type="number"],
+        #apiForm textarea {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
@@ -62,6 +163,29 @@
             left: 10px;
             top: 10px;
             z-index: 1000;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+            outline: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidebar-toggle:hover,
+        .sidebar-toggle:focus {
+            background-color: #0056b3;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .sidebar-toggle:active {
+            background-color: #004085;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transform: translateY(0);
         }
 
         .response-container {
@@ -74,13 +198,15 @@
             align-items: center;
         }
 
-        .response-container table, .submit-container {
+        .response-container table,
+        .submit-container {
             width: 90%;
             margin-bottom: 20px;
         }
 
 
-        input[type="text"], textarea {
+        input[type="text"],
+        textarea {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
@@ -102,7 +228,8 @@
             box-sizing: border-box;
         }
 
-        .submit-container input[type="button"], .copy-btn {
+        .submit-container input[type="button"],
+        .copy-btn {
             width: 30%;
             padding: 10px;
             border: none;
@@ -199,7 +326,8 @@
             margin-bottom: 20px;
         }
 
-        h2, h3 {
+        h2,
+        h3 {
             margin-top: 20px;
             text-align: center;
         }
@@ -218,11 +346,13 @@
             margin-top: 10px;
         }
 
-        .model-timeout, .model-concurrency {
+        .model-timeout,
+        .model-concurrency {
             width: 48%;
         }
 
-        .model-timeout input, .model-concurrency input {
+        .model-timeout input,
+        .model-concurrency input {
             width: 100%;
         }
 
@@ -234,7 +364,8 @@
             margin-top: 20px;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
@@ -246,7 +377,8 @@
         }
 
 
-        h1, h2 {
+        h1,
+        h2 {
             color: #007bff;
             text-align: center;
         }
@@ -495,6 +627,7 @@
                 opacity: 0;
                 transform: translateX(100%);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(0);
@@ -570,87 +703,87 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             transform: translateY(0);
         }
-
-
     </style>
 </head>
+
 <body>
-<button id="sidebarToggle" class="sidebar-toggle">API配置</button>
-<div id="overlay" class="overlay"></div>
-<div class="container">
-    <h1>API CHECKER</h1>
-    <h3>（适配 oneapi/newapi 等中转格式）</h3>
+    <button id="sidebarToggle" class="sidebar-toggle">API配置</button>
+    <div id="overlay" class="overlay"></div>
+    <div class="container">
+        <h1>API CHECKER</h1>
+        <h3>（适配 oneapi/newapi 等中转格式）</h3>
 
-    <form id="apiForm">
+        <form id="apiForm">
             <textarea id="api_info" name="api_info"
-                      placeholder="懒人专用文本框，支持同时粘贴接口地址和密钥，智能提取，如：https://api.openai.com，sk-TodayIsThursdayVme50ForKFC"></textarea>
-        <input type="text" id="api_url" name="api_url" placeholder="接口地址，如：https://api.openai.com" value="">
-        <input type="text" id="api_key" name="api_key" placeholder="密钥，如：sk-TodayIsThursdayVme50ForKFC" value="">
-        <div class="model-input-container" id="model-input-container">
-            <textarea type="text" id="model_name" name="model_name"
-                      placeholder="支持手动填入测试模型名称，用英文逗号分隔多个模型"></textarea>
-            <input type="button" value="获取模型列表" style="height: 50px" onclick="getModelList()">
-        </div>
-        <div id="modelCheckboxes"></div>
-        <div class="model-timeout-concurrency">
-            <div class="model-timeout">
-                <label for="model_timeout">设置请求超时(秒):</label>
-                <input type="number" style="height: 30px;width: 70px" id="model_timeout" name="model_timeout" value="10"
-                       min="1">
+                placeholder="懒人专用文本框，支持同时粘贴接口地址和密钥，智能提取，如：https://api.openai.com，sk-TodayIsThursdayVme50ForKFC"></textarea>
+            <input type="text" id="api_url" name="api_url" placeholder="接口地址，如：https://api.openai.com" value="">
+            <input type="text" id="api_key" name="api_key" placeholder="密钥，如：sk-TodayIsThursdayVme50ForKFC" value="">
+            <div class="model-input-container" id="model-input-container">
+                <textarea type="text" id="model_name" name="model_name"
+                    placeholder="支持手动填入测试模型名称，用英文逗号分隔多个模型"></textarea>
+                <input type="button" value="获取模型列表" style="height: 50px" onclick="getModelList()">
             </div>
-            <div class="model-concurrency" style="height: 50px">
-                <label for="model_concurrency">设置请求并发数量:</label>
-                <input type="number" style="height: 30px;width: 70px" id="model_concurrency" name="model_concurrency"
-                       value="5" min="1">
+            <div id="modelCheckboxes"></div>
+            <div class="model-timeout-concurrency">
+                <div class="model-timeout">
+                    <label for="model_timeout">设置请求超时(秒):</label>
+                    <input type="number" style="height: 30px;width: 70px" id="model_timeout" name="model_timeout"
+                        value="10" min="1">
+                </div>
+                <div class="model-concurrency" style="height: 50px">
+                    <label for="model_concurrency">设置请求并发数量:</label>
+                    <input type="number" style="height: 30px;width: 70px" id="model_concurrency"
+                        name="model_concurrency" value="5" min="1">
+                </div>
             </div>
-        </div>
-        <div class="submit-container">
-            <input type="button" value="测试模型" onclick="testModels()" class="submit-query">
-            <input type="button" value="检查额度" onclick="checkQuota()" class="check-quota">
-            <input type="button" value="清空表单" onclick="clearForm()" class="clear-form">
-        </div>
-    </form>
-</div>
-<div id="results" class="response-container"></div>
+            <div class="submit-container">
+                <input type="button" value="测试模型" onclick="testModels()" class="submit-query">
+                <input type="button" value="检查额度" onclick="checkQuota()" class="check-quota">
+                <input type="button" value="清空表单" onclick="clearForm()" class="clear-form">
+            </div>
+        </form>
+    </div>
+    <div id="results" class="response-container"></div>
 
-<div class="copyright">
-    <p> © 2024 linuxdoer 版权所有<br>点点star 自行部署 <a href="https://github.com/QAbot-zh/query-key" target="_blank">github仓库</a>
-        <br>贡献者：<a href="https://linux.do/u/rick" target="_blank"><img
-                src="https://linux.do/user_avatar/linux.do/rick/288/137821_2.png" alt="rick">rick </a>和<a
+    <div class="copyright">
+        <p> © 2024 linuxdoer 版权所有<br>点点star 自行部署 <a href="https://github.com/QAbot-zh/query-key"
+                target="_blank">github仓库</a>
+            <br>贡献者：<a href="https://linux.do/u/rick" target="_blank"><img
+                    src="https://linux.do/user_avatar/linux.do/rick/288/137821_2.png" alt="rick">rick </a>和<a
                 href="https://linux.do/u/zhong_little" target="_blank"><img
-                src="https://linux.do/user_avatar/linux.do/zhong_little/288/104887_2.png"
-                alt="Megasoft">Megasoft</a>和<a
-                href="https://linux.do/u/fangyuan99" target="_blank"><img
-                src="https://linux.do/letter_avatar_proxy/v4/letter/f/b3f665/144.png" alt="fangyuan99">fangyuan99</a>
-    </p>
-</div>
+                    src="https://linux.do/user_avatar/linux.do/zhong_little/288/104887_2.png"
+                    alt="Megasoft">Megasoft</a>和<a href="https://linux.do/u/fangyuan99" target="_blank"><img
+                    src="https://linux.do/letter_avatar_proxy/v4/letter/f/b3f665/144.png"
+                    alt="fangyuan99">fangyuan99</a>
+        </p>
+    </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        displayResults({valid: [], inconsistent: [], invalid: []}); // 传入空的数据结构
-    });
-    document.getElementById('sidebarToggle').addEventListener('click', function () {
-        const container = document.querySelector('.container');
-        const overlay = document.getElementById('overlay');
-        if (container.style.width === '60%') {
-            container.style.width = '0';
-            overlay.style.display = 'none';
-        } else {
-            container.style.width = '60%';
-            overlay.style.display = 'block';
-        }
-    });
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            displayResults({ valid: [], inconsistent: [], invalid: [] }); // 传入空的数据结构
+        });
+        document.getElementById('sidebarToggle').addEventListener('click', function () {
+            const container = document.querySelector('.container');
+            const overlay = document.getElementById('overlay');
+            if (container.classList.contains('show')) {
+                container.classList.remove('show');
+                overlay.classList.remove('show');
+            } else {
+                container.classList.add('show');
+                overlay.classList.add('show');
+            }
+        });
 
-    document.getElementById('overlay').addEventListener('click', function () {
-        const container = document.querySelector('.container');
-        container.style.width = '0';
-        this.style.display = 'none';
-    });
+        document.getElementById('overlay').addEventListener('click', function () {
+            const container = document.querySelector('.container');
+            container.classList.remove('show');
+            this.classList.remove('show');
+        });
 
 
-    // 显示公告
-    function showToast() {
-        const message = `
+        // 显示公告
+        function showToast() {
+            const message = `
             <div>
                 <p><strong>API CHECKER v1.4</strong></p>
                 <br>
@@ -679,83 +812,83 @@
                 <div>🌡️ 温度验证：低温度参数下，大模型回复的稳定性。测试结果仅供参考，原理请看 <a href="https://linux.do/t/topic/195972" target="_blank" style="color: #1e88e5">温度验证</a></div>
             </div>
         `;
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.innerHTML = `${message}
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `${message}
                            <button class="close-button" onclick="this.parentElement.style.display='none';" aria-label="close">
     <svg aria-hidden="true" viewBox="0 0 14 16">
         <path fill-rule="evenodd" d="M7.71 8.23l3.75 3.75-1.48 1.48-3.75-3.75-3.75 3.75L1 11.98l3.75-3.75L1 4.48 2.48 3l3.75 3.75L9.98 3l1.48 1.48-3.75 3.75z"></path>
     </svg>
 </button>
 `;
-        document.body.appendChild(toast);
-    }
-
-    showToast();
-    // 智能提取API信息
-    document.getElementById('api_info').addEventListener('input', function () {
-        let text = this.value;
-        let urlPattern = /(https?:\/\/[^\s，。、！,；;\n]+)/;
-        let keyPattern = /(sk-[a-zA-Z0-9]+)/;
-
-        let urlMatch = text.match(urlPattern);
-        let keyMatch = text.match(keyPattern);
-
-        if (urlMatch) {
-            //去除末尾/后的空格 其他字符 保留到最后一个/前面
-            let cleanUrl = urlMatch[0].match(/(.*)\/.*/)[1];
-            //如果. 存在则使用
-            if (cleanUrl.includes('.')) {
-                document.getElementById('api_url').value = cleanUrl;
-                console.log(cleanUrl);
-            } else {
-                document.getElementById('api_url').value = urlMatch[0];
-                console.log(urlMatch[0]);
-            }
+            document.body.appendChild(toast);
         }
-        if (keyMatch) {
-            document.getElementById('api_key').value = keyMatch[0];
-        }
-    });
 
-    function getModelList() {
-        const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');
-        const apiKey = document.getElementById('api_key').value;
-        console.log(apiUrl, apiKey);
+        showToast();
+        // 智能提取API信息
+        document.getElementById('api_info').addEventListener('input', function () {
+            let text = this.value;
+            let urlPattern = /(https?:\/\/[^\s，。、！,；;\n]+)/;
+            let keyPattern = /(sk-[a-zA-Z0-9]+)/;
 
-        layui.use('layer', function () {
-            let layer = layui.layer;
+            let urlMatch = text.match(urlPattern);
+            let keyMatch = text.match(keyPattern);
 
-            layer.load();
-            fetch(`${apiUrl}/v1/models`, {
-                headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Content-Type': 'application/json'
+            if (urlMatch) {
+                //去除末尾/后的空格 其他字符 保留到最后一个/前面
+                let cleanUrl = urlMatch[0].match(/(.*)\/.*/)[1];
+                //如果. 存在则使用
+                if (cleanUrl.includes('.')) {
+                    document.getElementById('api_url').value = cleanUrl;
+                    console.log(cleanUrl);
+                } else {
+                    document.getElementById('api_url').value = urlMatch[0];
+                    console.log(urlMatch[0]);
                 }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    layer.closeAll('loading');
-                    const models = data.data.map(model => model.id);
-                    models.sort();
-                    displayModelCheckboxes(models);
-                })
-                .catch(error => {
-                    layer.closeAll('loading');
-                    layer.alert('获取模型列表失败: ' + error.message);
-                });
+            }
+            if (keyMatch) {
+                document.getElementById('api_key').value = keyMatch[0];
+            }
         });
-    }
 
-    // 显示模型复选框
-    function displayModelCheckboxes(models) {
-        layui.use(['layer', 'form'], function () {
-            let layer = layui.layer;
-            let form = layui.form;
+        function getModelList() {
+            const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');
+            const apiKey = document.getElementById('api_key').value;
+            console.log(apiUrl, apiKey);
 
-            let content = '<div style="padding: 20px;"><form class="layui-form">';
-            content += '<div id="selectedCount">已选择 0 个模型</div>';
-            content += `
+            layui.use('layer', function () {
+                let layer = layui.layer;
+
+                layer.load();
+                fetch(`${apiUrl}/v1/models`, {
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        layer.closeAll('loading');
+                        const models = data.data.map(model => model.id);
+                        models.sort();
+                        displayModelCheckboxes(models);
+                    })
+                    .catch(error => {
+                        layer.closeAll('loading');
+                        layer.alert('获取模型列表失败: ' + error.message);
+                    });
+            });
+        }
+
+        // 显示模型复选框
+        function displayModelCheckboxes(models) {
+            layui.use(['layer', 'form'], function () {
+                let layer = layui.layer;
+                let form = layui.form;
+
+                let content = '<div style="padding: 20px;"><form class="layui-form">';
+                content += '<div id="selectedCount">已选择 0 个模型</div>';
+                content += `
                 <div class="model-filter-container">
                     <input type="text" id="prefixFilter" placeholder="输入模型前缀筛选">
                     <button type="button" onclick="filterModels()">筛选</button>
@@ -766,704 +899,704 @@
                     <label><input type="checkbox" lay-skin="primary" lay-filter="checkAllChatOnly" title="全选（过滤音/图/视/嵌入模型）"></label>
                 </div>
             `;
-            content += '<div id="modelList">';
-            models.forEach((model, index) => {
-                content += `
+                content += '<div id="modelList">';
+                models.forEach((model, index) => {
+                    content += `
                     <div class="layui-form-item model-item" data-model="${model}">
                         <input type="checkbox" name="models[${index}]" value="${model}" title="${model}" lay-skin="primary">
                     </div>
                 `;
+                });
+                content += '</div></form></div>';
+
+                layer.open({
+                    type: 1,
+                    title: '选择模型',
+                    content: content,
+                    area: ['400px', '550px'],
+                    btn: ['确定', '取消'],
+                    success: function (layero, index) {
+                        form.render('checkbox');
+                        setupEventListeners(layero, form);
+                    },
+                    yes: function (index, layero) {
+                        const selectedModels = layero.find('input[name^="models"]:checked').map(function () {
+                            return this.value;
+                        }).get();
+                        document.getElementById('model_name').value = selectedModels.join(',');
+                        layer.close(index);
+                    }
+                });
             });
-            content += '</div></form></div>';
-
-            layer.open({
-                type: 1,
-                title: '选择模型',
-                content: content,
-                area: ['400px', '550px'],
-                btn: ['确定', '取消'],
-                success: function (layero, index) {
-                    form.render('checkbox');
-                    setupEventListeners(layero, form);
-                },
-                yes: function (index, layero) {
-                    const selectedModels = layero.find('input[name^="models"]:checked').map(function () {
-                        return this.value;
-                    }).get();
-                    document.getElementById('model_name').value = selectedModels.join(',');
-                    layer.close(index);
-                }
-            });
-        });
-    }
-
-    function setupEventListeners(layero, form) {
-        form.on('checkbox', function (data) {
-            updateSelectedCount(layero);
-        });
-
-        form.on('checkbox(checkAll)', function (data) {
-            let child = layero.find('input[name^="models"]');
-            child.each(function (index, item) {
-                item.checked = data.elem.checked;
-            });
-            form.render('checkbox');
-            updateSelectedCount(layero);
-            layero.find('input[lay-filter="checkAllChatOnly"]').prop('checked', false);
-        });
-
-        form.on('checkbox(checkAllChatOnly)', function (data) {
-            const child = layero.find('input[name^="models"]');
-            const notChatPattern = /^(dall|mj|midjourney|stable-diffusion|playground|flux|swap_face|tts|whisper|text|emb|luma|vidu|pdf|suno|pika|chirp|domo|runway|cogvideo)/;
-            child.each(function (index, item) {
-                const modelName = item.value;
-                item.checked = data.elem.checked && !notChatPattern.test(modelName) && !/(image|audio|video|music|pdf|flux|suno|embed)/.test(modelName);
-            });
-            form.render('checkbox');
-            updateSelectedCount(layero);
-            layero.find('input[lay-filter="checkAll"]').prop('checked', false);
-        });
-    }
-
-    function filterModels() {
-        const prefix = document.getElementById('prefixFilter').value.trim().toLowerCase();
-        const modelItems = document.querySelectorAll('.model-item');
-        const modelList = document.getElementById('modelList');
-
-        const matchedModels = [];
-        const unmatchedModels = [];
-
-        modelItems.forEach(item => {
-            const model = item.getAttribute('data-model').toLowerCase();
-            if (model.startsWith(prefix)) {
-                matchedModels.push(item);
-            } else {
-                unmatchedModels.push(item);
-            }
-        });
-
-
-        matchedModels.forEach(item => {
-            modelList.insertBefore(item, modelList.firstChild);
-            item.querySelector('input[type="checkbox"]').checked = true;
-        });
-
-        unmatchedModels.forEach(item => {
-            modelList.appendChild(item);
-        });
-
-        layui.form.render('checkbox');
-        let count = matchedModels.length;
-        updateSelectedCount2(count);
-    }
-
-    function clearFilter() {
-        document.getElementById('prefixFilter').value = '';
-        const modelItems = document.querySelectorAll('.model-item');
-        const modelList = document.getElementById('modelList');
-
-        modelItems.forEach(item => {
-            item.querySelector('input[type="checkbox"]').checked = false;
-            modelList.appendChild(item);
-        });
-
-        layui.form.render('checkbox');
-        updateSelectedCount2(0);
-    }
-
-
-    // 更新已选择的模型数量
-    function updateSelectedCount(layero) {
-        const selectedCount = layero.find('input[name^="models"]:checked').length;
-        layero.find('#selectedCount').text(`已选择 ${selectedCount} 个模型`);
-    }
-
-    function updateSelectedCount2(count) {
-        document.querySelector('#selectedCount').innerText = `已选择 ${count} 个模型`;
-    }
-
-    let results = {
-        valid: [],
-        invalid: [],
-        inconsistent: [],
-        awaitOfficialVerification: []
-    };
-
-    function createTransparentCircularProgress() {
-        let canvas, ctx;
-        let total, completed, failed, pending;
-        let animationId;
-
-        function createCanvas() {
-            canvas = document.createElement('canvas');
-            canvas.width = 200;
-            canvas.height = 200;
-            canvas.style.position = 'fixed';
-            canvas.style.top = '50%';
-            canvas.style.left = '50%';
-            canvas.style.transform = 'translate(-50%, -50%)';
-            canvas.style.zIndex = '19891020'; // 确保它在最上层
-            document.body.appendChild(canvas);
-            ctx = canvas.getContext('2d');
         }
 
-        function drawProgress() {
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const radius = Math.min(centerX, centerY) - 10;
+        function setupEventListeners(layero, form) {
+            form.on('checkbox', function (data) {
+                updateSelectedCount(layero);
+            });
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            form.on('checkbox(checkAll)', function (data) {
+                let child = layero.find('input[name^="models"]');
+                child.each(function (index, item) {
+                    item.checked = data.elem.checked;
+                });
+                form.render('checkbox');
+                updateSelectedCount(layero);
+                layero.find('input[lay-filter="checkAllChatOnly"]').prop('checked', false);
+            });
 
-            // 绘制半透明背景
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(240, 240, 240, 0.5)';
-            ctx.fill();
-
-            // 绘制进度
-            const completedAngle = ((completed + failed) / total) * Math.PI * 2;
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.arc(centerX, centerY, radius, -Math.PI / 2, completedAngle - Math.PI / 2);
-            ctx.fillStyle = 'rgba(76, 175, 80, 0.7)';  // 半透明绿色表示已完成
-            ctx.fill();
-
-            const failedAngle = (failed / total) * Math.PI * 2;
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.arc(centerX, centerY, radius, -Math.PI / 2, failedAngle - Math.PI / 2);
-            ctx.fillStyle = 'rgba(244, 67, 54, 0.7)';  // 半透明红色表示失败
-            ctx.fill();
-
-            // 绘制中心圆（表示待处理）
-            const innerRadius = radius * 0.7;
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, innerRadius, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(255, 193, 7, 0.7)';  // 半透明黄色表示待处理
-            ctx.fill();
-
-            // 添加文字
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-            ctx.font = '14px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText(`总计: ${total}`, centerX, centerY - 20);
-            ctx.fillText(`完成: ${completed}`, centerX, centerY);
-            ctx.fillText(`失败: ${failed}`, centerX, centerY + 20);
-            ctx.fillText(`待处理: ${pending}`, centerX, centerY + 40);
-
-            // 添加旋转效果
-            ctx.save();
-            ctx.translate(centerX, centerY);
-            ctx.rotate(performance.now() / 1000);
-            ctx.beginPath();
-            ctx.moveTo(0, -radius - 5);
-            ctx.lineTo(0, -radius + 5);
-            ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-            ctx.restore();
-
-            animationId = requestAnimationFrame(drawProgress);
+            form.on('checkbox(checkAllChatOnly)', function (data) {
+                const child = layero.find('input[name^="models"]');
+                const notChatPattern = /^(dall|mj|midjourney|stable-diffusion|playground|flux|swap_face|tts|whisper|text|emb|luma|vidu|pdf|suno|pika|chirp|domo|runway|cogvideo)/;
+                child.each(function (index, item) {
+                    const modelName = item.value;
+                    item.checked = data.elem.checked && !notChatPattern.test(modelName) && !/(image|audio|video|music|pdf|flux|suno|embed)/.test(modelName);
+                });
+                form.render('checkbox');
+                updateSelectedCount(layero);
+                layero.find('input[lay-filter="checkAll"]').prop('checked', false);
+            });
         }
 
-        return {
-            show: function (totalCount) {
-                createCanvas();
-                total = totalCount;
-                completed = 0;
-                failed = 0;
-                pending = total;
-                drawProgress();
-            },
-            update: function (newCompleted, newFailed) {
-                completed = newCompleted;
-                failed = newFailed;
-                pending = total - completed - failed;
-            },
-            hide: function () {
-                if (canvas) {
-                    document.body.removeChild(canvas);
-                    cancelAnimationFrame(animationId);
-                }
-            }
-        };
-    }
+        function filterModels() {
+            const prefix = document.getElementById('prefixFilter').value.trim().toLowerCase();
+            const modelItems = document.querySelectorAll('.model-item');
+            const modelList = document.getElementById('modelList');
 
-    async function testModels() {
-        results = {
+            const matchedModels = [];
+            const unmatchedModels = [];
+
+            modelItems.forEach(item => {
+                const model = item.getAttribute('data-model').toLowerCase();
+                if (model.startsWith(prefix)) {
+                    matchedModels.push(item);
+                } else {
+                    unmatchedModels.push(item);
+                }
+            });
+
+
+            matchedModels.forEach(item => {
+                modelList.insertBefore(item, modelList.firstChild);
+                item.querySelector('input[type="checkbox"]').checked = true;
+            });
+
+            unmatchedModels.forEach(item => {
+                modelList.appendChild(item);
+            });
+
+            layui.form.render('checkbox');
+            let count = matchedModels.length;
+            updateSelectedCount2(count);
+        }
+
+        function clearFilter() {
+            document.getElementById('prefixFilter').value = '';
+            const modelItems = document.querySelectorAll('.model-item');
+            const modelList = document.getElementById('modelList');
+
+            modelItems.forEach(item => {
+                item.querySelector('input[type="checkbox"]').checked = false;
+                modelList.appendChild(item);
+            });
+
+            layui.form.render('checkbox');
+            updateSelectedCount2(0);
+        }
+
+
+        // 更新已选择的模型数量
+        function updateSelectedCount(layero) {
+            const selectedCount = layero.find('input[name^="models"]:checked').length;
+            layero.find('#selectedCount').text(`已选择 ${selectedCount} 个模型`);
+        }
+
+        function updateSelectedCount2(count) {
+            document.querySelector('#selectedCount').innerText = `已选择 ${count} 个模型`;
+        }
+
+        let results = {
             valid: [],
             invalid: [],
             inconsistent: [],
             awaitOfficialVerification: []
         };
-        const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');
-        const apiKey = document.getElementById('api_key').value;
-        const modelNames = document.getElementById('model_name').value.split(',').map(m => m.trim()).filter(m => m);
-        const timeout = parseInt(document.getElementById('model_timeout').value) * 1000; // 转换为毫秒
-        const concurrency = parseInt(document.getElementById('model_concurrency').value);
 
-        if (modelNames.length === 0) {
-            layui.use('layer', function () {
-                const layer = layui.layer;
-                layer.alert('请输入至少一个模型名称或从列表中选择模型');
-            });
-            return;
+        function createTransparentCircularProgress() {
+            let canvas, ctx;
+            let total, completed, failed, pending;
+            let animationId;
+
+            function createCanvas() {
+                canvas = document.createElement('canvas');
+                canvas.width = 200;
+                canvas.height = 200;
+                canvas.style.position = 'fixed';
+                canvas.style.top = '50%';
+                canvas.style.left = '50%';
+                canvas.style.transform = 'translate(-50%, -50%)';
+                canvas.style.zIndex = '19891020'; // 确保它在最上层
+                document.body.appendChild(canvas);
+                ctx = canvas.getContext('2d');
+            }
+
+            function drawProgress() {
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const radius = Math.min(centerX, centerY) - 10;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // 绘制半透明背景
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(240, 240, 240, 0.5)';
+                ctx.fill();
+
+                // 绘制进度
+                const completedAngle = ((completed + failed) / total) * Math.PI * 2;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, -Math.PI / 2, completedAngle - Math.PI / 2);
+                ctx.fillStyle = 'rgba(76, 175, 80, 0.7)';  // 半透明绿色表示已完成
+                ctx.fill();
+
+                const failedAngle = (failed / total) * Math.PI * 2;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, -Math.PI / 2, failedAngle - Math.PI / 2);
+                ctx.fillStyle = 'rgba(244, 67, 54, 0.7)';  // 半透明红色表示失败
+                ctx.fill();
+
+                // 绘制中心圆（表示待处理）
+                const innerRadius = radius * 0.7;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, innerRadius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 193, 7, 0.7)';  // 半透明黄色表示待处理
+                ctx.fill();
+
+                // 添加文字
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`总计: ${total}`, centerX, centerY - 20);
+                ctx.fillText(`完成: ${completed}`, centerX, centerY);
+                ctx.fillText(`失败: ${failed}`, centerX, centerY + 20);
+                ctx.fillText(`待处理: ${pending}`, centerX, centerY + 40);
+
+                // 添加旋转效果
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(performance.now() / 1000);
+                ctx.beginPath();
+                ctx.moveTo(0, -radius - 5);
+                ctx.lineTo(0, -radius + 5);
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.restore();
+
+                animationId = requestAnimationFrame(drawProgress);
+            }
+
+            return {
+                show: function (totalCount) {
+                    createCanvas();
+                    total = totalCount;
+                    completed = 0;
+                    failed = 0;
+                    pending = total;
+                    drawProgress();
+                },
+                update: function (newCompleted, newFailed) {
+                    completed = newCompleted;
+                    failed = newFailed;
+                    pending = total - completed - failed;
+                },
+                hide: function () {
+                    if (canvas) {
+                        document.body.removeChild(canvas);
+                        cancelAnimationFrame(animationId);
+                    }
+                }
+            };
         }
 
+        async function testModels() {
+            results = {
+                valid: [],
+                invalid: [],
+                inconsistent: [],
+                awaitOfficialVerification: []
+            };
+            const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');
+            const apiKey = document.getElementById('api_key').value;
+            const modelNames = document.getElementById('model_name').value.split(',').map(m => m.trim()).filter(m => m);
+            const timeout = parseInt(document.getElementById('model_timeout').value) * 1000; // 转换为毫秒
+            const concurrency = parseInt(document.getElementById('model_concurrency').value);
 
-        const circularProgress = createTransparentCircularProgress();
-        circularProgress.show(modelNames.length);
-
-        let completed = 0;
-        let failed = 0;
-
-        async function testModel(model) {
-            const controller = new AbortController();
-            const id = setTimeout(() => controller.abort(), timeout);
-            const startTime = Date.now();
-
-            let response_text;
-            try {
-                const requestBody = {
-                    model: model,
-                    messages: [{role: "user", content: "写一个10个字的冷笑话"}]
-                };
-                if (model.startsWith('gpt-')) {
-                    requestBody.seed = 331;
-                }
-                const response = await fetch(`${apiUrl}/v1/chat/completions`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestBody),
-                    signal: controller.signal
+            if (modelNames.length === 0) {
+                layui.use('layer', function () {
+                    const layer = layui.layer;
+                    layer.alert('请输入至少一个模型名称或从列表中选择模型');
                 });
+                return;
+            }
 
-                const endTime = Date.now();
-                const responseTime = (endTime - startTime) / 1000; // 转换为秒
 
-                if (response.ok) {
-                    completed++;
-                    const data = await response.json();
-                    const returnedModel = data.model;
-                    if (returnedModel === model) {
-                        results.valid.push({model, responseTime});
-                        if (model.startsWith('gpt-')) {
-                            if (data.system_fingerprint) {
-                                results.awaitOfficialVerification.push({
-                                    model,
-                                    system_fingerprint: data.system_fingerprint
-                                });
+            const circularProgress = createTransparentCircularProgress();
+            circularProgress.show(modelNames.length);
+
+            let completed = 0;
+            let failed = 0;
+
+            async function testModel(model) {
+                const controller = new AbortController();
+                const id = setTimeout(() => controller.abort(), timeout);
+                const startTime = Date.now();
+
+                let response_text;
+                try {
+                    const requestBody = {
+                        model: model,
+                        messages: [{ role: "user", content: "写一个10个字的冷笑话" }]
+                    };
+                    if (model.startsWith('gpt-')) {
+                        requestBody.seed = 331;
+                    }
+                    const response = await fetch(`${apiUrl}/v1/chat/completions`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${apiKey}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestBody),
+                        signal: controller.signal
+                    });
+
+                    const endTime = Date.now();
+                    const responseTime = (endTime - startTime) / 1000; // 转换为秒
+
+                    if (response.ok) {
+                        completed++;
+                        const data = await response.json();
+                        const returnedModel = data.model;
+                        if (returnedModel === model) {
+                            results.valid.push({ model, responseTime });
+                            if (model.startsWith('gpt-')) {
+                                if (data.system_fingerprint) {
+                                    results.awaitOfficialVerification.push({
+                                        model,
+                                        system_fingerprint: data.system_fingerprint
+                                    });
+                                }
+                            }
+                            console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型一致，响应时间：${responseTime.toFixed(2)} 秒`);
+                        } else {
+                            results.inconsistent.push({ model, returnedModel, responseTime });
+                            console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不一致，期望：${model}，实际：${returnedModel}，响应时间：${responseTime.toFixed(2)} 秒`);
+                        }
+                    } else {
+                        failed++;
+                        try {
+                            const jsonResponse = await response.json();
+                            response_text = jsonResponse.error.message;
+                        } catch (jsonError) {
+                            try {
+                                response_text = await response.text();
+                            } catch (textError) {
+                                response_text = '无法解析响应内容';
                             }
                         }
-                        console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型一致，响应时间：${responseTime.toFixed(2)} 秒`);
-                    } else {
-                        results.inconsistent.push({model, returnedModel, responseTime});
-                        console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不一致，期望：${model}，实际：${returnedModel}，响应时间：${responseTime.toFixed(2)} 秒`);
+                        results.invalid.push({ model, response_text })
+                        console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不可用，响应：${response.status} ${response.statusText} ${response_text}`);
                     }
-                } else {
+                } catch (error) {
                     failed++;
-                    try {
-                        const jsonResponse = await response.json();
-                        response_text = jsonResponse.error.message;
-                    } catch (jsonError) {
-                        try {
-                            response_text = await response.text();
-                        } catch (textError) {
-                            response_text = '无法解析响应内容';
-                        }
+                    if (error.name === 'AbortError') {
+                        results.invalid.push({ model, error: '超时' });
+                        console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不可用（超时）`);
+                    } else {
+                        results.invalid.push({ model, error: error.message });
+                        console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不可用，错误：${error.message}`);
                     }
-                    results.invalid.push({model, response_text})
-                    console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不可用，响应：${response.status} ${response.statusText} ${response_text}`);
+                } finally {
+                    circularProgress.update(completed, failed);
                 }
-            } catch (error) {
-                failed++;
-                if (error.name === 'AbortError') {
-                    results.invalid.push({model, error: '超时'});
-                    console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不可用（超时）`);
-                } else {
-                    results.invalid.push({model, error: error.message});
-                    console.log(`测试 API 节点：${apiUrl} 测试模型：${model} 模型不可用，错误：${error.message}`);
-                }
-            } finally {
-                circularProgress.update(completed, failed);
-            }
-        }
-
-        async function runBatch(models) {
-            const promises = models.map(model => testModel(model));
-            await Promise.all(promises);
-        }
-
-        async function runAllTests() {
-            for (let i = 0; i < modelNames.length; i += concurrency) {
-                const batch = modelNames.slice(i, i + concurrency);
-                await runBatch(batch);
             }
 
-            circularProgress.hide();
-            displayResults(results);
-            showSummary(results);
+            async function runBatch(models) {
+                const promises = models.map(model => testModel(model));
+                await Promise.all(promises);
+            }
+
+            async function runAllTests() {
+                for (let i = 0; i < modelNames.length; i += concurrency) {
+                    const batch = modelNames.slice(i, i + concurrency);
+                    await runBatch(batch);
+                }
+
+                circularProgress.hide();
+                displayResults(results);
+                showSummary(results);
+            }
+
+            runAllTests().catch(error => {
+                circularProgress.hide();
+                layui.use('layer', function () {
+                    const layer = layui.layer;
+                    layer.alert('测试模型时发生错误: ' + error.message);
+                });
+            });
         }
 
-        runAllTests().catch(error => {
-            circularProgress.hide();
+        function showSummary(results) {
+            const validCount = results.valid.length;
+            const inconsistentCount = results.inconsistent.length;
+            const invalidCount = results.invalid.length;
+            const totalCount = validCount + inconsistentCount + invalidCount;
+
             layui.use('layer', function () {
                 const layer = layui.layer;
-                layer.alert('测试模型时发生错误: ' + error.message);
-            });
-        });
-    }
-
-    function showSummary(results) {
-        const validCount = results.valid.length;
-        const inconsistentCount = results.inconsistent.length;
-        const invalidCount = results.invalid.length;
-        const totalCount = validCount + inconsistentCount + invalidCount;
-
-        layui.use('layer', function () {
-            const layer = layui.layer;
-            layer.alert(`测试总结：<br>
+                layer.alert(`测试总结：<br>
                     总共测试了 ${totalCount} 个模型<br>
                     其中：<br>
                     - ${validCount} 个模型可用且一致<br>
                     - ${inconsistentCount} 个模型可用但不一致<br>
                     - ${invalidCount} 个模型不可用`,
-                {title: '测试结果总结'}
-            );
-        });
-    }
-
-    // 显示测试结果
-    function displayResults(results) {
-        const resultsDiv = document.getElementById('results');
-        let content = '<h2>测试结果</h2>' +
-            '<div class="copy-buttons">' +
-            '<div class="submit-container">' +
-            '<button class="check-quota copy-btn" onclick="copyConsistentModels()">复制一致模型</button>' +
-            '<button class="check-quota copy-btn" onclick="copyConsistentAndInconsistentModels()">复制所有可用模型</button>' +
-            '<button class="check-quota copy-btn"onclick="copyConsistentAndInconsistentReturedModels()">复制可用原始模型</button>' +
-            '</div>' +
-            '</div>' +
-            '<table>' +
-            '<tr>' +
-            '<th class="td1">状态</th>' +
-            '<th class="td2">模型名称</th>' +
-            '<th class="td3">响应时间 (秒)</th>' +
-            '<th class="td4">备注</th>' +
-            '</tr>';
-
-        // 判断是否有有效数据
-        if (results && (results.valid.length > 0 || results.inconsistent.length > 0 || results.invalid.length > 0)) {
-            results.valid.forEach(function (r) {
-                let verifyButtons = '<button class="verify-btn cyan" data-tooltip="校验函数功能是否可用,将发起1次请求" onclick="verifyFunctionCalling(\'' + r.model + '\')">函数验证</button>';
-                if (r.model.startsWith('gpt-') || r.model.startsWith('claude-')) {
-                    let officialButtonClass = results.awaitOfficialVerification.some(item => item.model === r.model) ? "green" : "yellow";
-                    verifyButtons += '<button class="verify-btn blue" data-tooltip="低温度参数下预测序列下一个值,将发起4次请求" onclick="verifyTemperature(\'' + r.model + '\')">温度验证</button>';
-                    if (r.model.startsWith('gpt-')) {
-                        verifyButtons += '<button class="verify-btn ' + officialButtonClass + '" data-tooltip="相同种子参数下校验回复相似性和系统指纹,将发起4次请求" onclick="verifyOfficial(\'' + r.model + '\')">官转验证</button>';
-                    }
-                }
-                content += '<tr>' +
-                    '<td class="td1 td1-ok">模型一致可用</td>' +
-                    '<td class="td2"><span class="copy-btn2" onclick="copyText(\'' + r.model + '\')">' + r.model + '</span></td>' +
-                    '<td class="td3">' + r.responseTime.toFixed(2) + '</td>' +
-                    '<td class="td4"><div class="verify-btn-group">' + verifyButtons + '</div></td>' +
-                    '</tr>';
+                    { title: '测试结果总结' }
+                );
             });
+        }
 
-            results.inconsistent.forEach(function (r) {
-                content += '<tr>' +
-                    '<td class="td1 td1-no">模型不一致/映射，tnnd掺假？</td>' +
-                    '<td class="td2"><span class="copy-btn2" onclick="copyText(\'' + r.model + '\')">' + r.model + '</span></td>' +
-                    '<td class="td3">' + r.responseTime.toFixed(2) + '</td>' +
-                    '<td class="td4">' + (r.returnedModel ? '返回模型: ' + r.returnedModel : '该接口未返回模型名称') + '</td>' +
-                    '</tr>';
-            });
-
-            results.invalid.forEach(function (r) {
-                content += '<tr>' +
-                    '<td class="td1 td1-error">模型不可用!!!，干啥呢</td>' +
-                    '<td class="td2"><span class="copy-btn2" onclick="copyText(\'' + r.model + '\')">' + r.model + '</span></td>' +
-                    '<td class="td3">-</td>' +
-                    '<td class="td4">' + (r.response_text || r.error) + '</td>' +
-                    '</tr>';
-            });
-        } else {
-            // 没有数据时显示空行
-            content += '<tr>' +
-                '<td colspan="4" class="td1">暂无数据显示</td>' +
+        // 显示测试结果
+        function displayResults(results) {
+            const resultsDiv = document.getElementById('results');
+            let content = '<h2>测试结果</h2>' +
+                '<div class="copy-buttons">' +
+                '<div class="submit-container">' +
+                '<button class="check-quota copy-btn" onclick="copyConsistentModels()">复制一致模型</button>' +
+                '<button class="check-quota copy-btn" onclick="copyConsistentAndInconsistentModels()">复制所有可用模型</button>' +
+                '<button class="check-quota copy-btn"onclick="copyConsistentAndInconsistentReturedModels()">复制可用原始模型</button>' +
+                '</div>' +
+                '</div>' +
+                '<table>' +
+                '<tr>' +
+                '<th class="td1">状态</th>' +
+                '<th class="td2">模型名称</th>' +
+                '<th class="td3">响应时间 (秒)</th>' +
+                '<th class="td4">备注</th>' +
                 '</tr>';
-        }
 
-        content += '</table>';
-        resultsDiv.innerHTML = content;
-    }
-
-
-    async function verifyOfficial(model) {
-        layui.use('layer', function () {
-            const layer = layui.layer;
-            layer.prompt({
-                formType: 0,
-                value: '888',
-                title: '请输入seed值 (1-900)',
-                area: ['300px', '50px']
-            }, function (seed, index) {
-                layer.close(index);
-                performOfficialVerification(model, parseInt(seed));
-
-            });
-        });
-    }
-
-    async function verifyTemperature(model) {
-        layui.use("layer", function () {
-            const layer = layui.layer;
-            layer.load();
-        });
-
-        try {
-            const results = await Promise.all(
-                [1, 2, 3, 4].map(() => sendTemperatureVerificationRequest(model))
-            );
-            const responses = results.map((result) =>
-                result.choices[0].message.content.trim()
-            );
-            let referenceValue;
-            if (model.startsWith("gpt-4o-mini")) {
-                referenceValue = 32;
-            } else if (model.startsWith("gpt-4o")) {
-                referenceValue = 59;
-            } else if (model.startsWith("claude-3-5") || model.startsWith("claude-3.5")) {
-                referenceValue = 51;
-            } else {
-                referenceValue = null;
-            }
-            layui.use("layer", function () {
-                const layer = layui.layer;
-                layer.closeAll("loading");
-
-                let message = `<strong>当前待验证模型：${model}</strong><p>参考值：c3.5 = 51(gcp测试)，gpt-4o = 59，gpt-4o-mini = 32(azure测试)</p>`;
-                message +=
-                    '<table style="width:100%; border-collapse: collapse; margin-bottom: 20px;">' +
-                    '<tr><th style="border: 1px solid #ddd; padding: 4px;">测试</th><th style="border: 1px solid #ddd; padding: 4px;">响应</th></tr>';
-
-                for (let i = 0; i < 4; i++) {
-
-                    let color = responses[i] == referenceValue ? "green" : "black";
-                    message +=
-                        "<tr>" +
-                        '<td style="border: 1px solid #ddd; padding: 4px;">测试 ' +
-                        (i + 1) +
-                        "</td>" +
-                        `<td style="border: 1px solid #ddd; padding: 4px; color: ${color};">` +
-                        responses[i] +
-                        "</td>" +
-                        "</tr>";
-                }
-
-                message += "</table>";
-
-                const allSame = responses.every((val) => val === responses[0]);
-                message +=
-                    "<strong>结论：</strong> " +
-                    (allSame
-                        ? "所有响应相同，可能是官方API"
-                        : "响应不同，可能不是官方API");
-
-                layer.alert(message, {
-                    title: "温度验证结果",
-                    area: ["600px", "400px"],
-                });
-            });
-        } catch (error) {
-            console.error("Error in verifyTemperature:", error);
-            layui.use("layer", function () {
-                const layer = layui.layer;
-                layer.closeAll("loading");
-                layer.alert("验证过程中发生错误: " + error.message, {
-                    title: "错误",
-                });
-            });
-        }
-    }
-
-    async function sendTemperatureVerificationRequest(model) {
-        const apiUrl = document
-            .getElementById("api_url")
-            .value.replace(/\/+$/, "");
-        const apiKey = document.getElementById("api_key").value;
-        try {
-            const response = await fetch(`${apiUrl}/v1/chat/completions`, {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${apiKey}`,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    messages: [
-                        {
-                            role: "system",
-                            content:
-                                "You're an associative thinker. The user gives you a sequence of 6 numbers. Your task is to figure out and provide the 7th number directly, without explaining how you got there.",
-                        },
-                        {
-                            role: "user",
-                            content: "5, 15, 77, 19, 53, 54,",
-                        },
-                    ],
-                    temperature: 0.01,
-                    model: model,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            return await response.json();
-        } catch (error) {
-            console.error("Error in sendTemperatureVerificationRequest:", error);
-            return {error: error.message};
-        }
-    }
-
-    async function performOfficialVerification(model, seed) {
-        layui.use('layer', function () {
-            const layer = layui.layer;
-            layer.load();
-        });
-
-        try {
-            const results = await Promise.all([1, 2, 3, 4].map(() => sendVerificationRequest(model, seed)));
-            const texts = [];
-            const fingerprints = [];
-
-            for (let i = 0; i < results.length; i++) {
-                if (results[i].error) {
-                    console.error(`Error in request ${i + 1}:`, results[i].error);
-                    layui.use('layer', function () {
-                        const layer = layui.layer;
-                        layer.closeAll('loading');
-                        layer.alert(`请求 ${i + 1} 失败: ${results[i].error}`, {title: '错误'});
-                    });
-                    return;
-                }
-                if (!results[i].choices?.[0]?.message?.content) {
-                    console.error(`Invalid response structure in request ${i + 1}:`, results[i]);
-                    layui.use('layer', function () {
-                        const layer = layui.layer;
-                        layer.closeAll('loading');
-                        layer.alert(`请求 ${i + 1} 返回的数据结构无效`, {title: '错误'});
-                    });
-                    return;
-                }
-                texts.push(results[i].choices[0].message.content);
-                fingerprints.push(results[i].system_fingerprint || 'N/A');
-            }
-
-            const similarity = compareTextSimilarity(texts[0], texts[1], texts[2], texts[3]);
-
-            layui.use('layer', function () {
-                api_url = document.getElementById('api_url').value;
-                const layer = layui.layer;
-                layer.closeAll('loading');
-                if (api_url === "https://api.openai.com") {
-                    layer.alert("官方API你来验证？", {title: '官方API'});
-                }
-                let similarityCount = Object.values(similarity).filter(value => parseFloat(value) > 0.6).length;
-                let lowSimilarityCount = Object.values(similarity).filter(value => parseFloat(value) < 0.1).length;
-
-                let title = '验证结果';
-                let message = '';
-                if (similarityCount >= 3) {
-                    title = '恭喜你，官方API呀！';
-                    message += '<strong>Tips: 这是官方API！</strong>';
-                } else if (similarityCount >= 2) {
-                    title = '可能是官方API';
-                    message += '<strong>Tips: 应该是官方的</strong>';
-                } else if (lowSimilarityCount >= 2) {
-                    title = '可能是假的';
-                    message += '<strong>Tips: 假的8</strong>';
-                } else {
-                    message += '<strong>Tips: 结果不确定，请进一步验证</strong>';
-                }
-
-                message += '<table style="width:100%; border-collapse: collapse; margin-bottom: 20px;">' +
-                    '<tr><th style="border: 1px solid #ddd; padding: 8px;">测试</th><th style="border: 1px solid #ddd; padding: 8px;">文本</th><th style="border: 1px solid #ddd; padding: 8px;">系统指纹</th></tr>';
-
-                for (let i = 0; i < 4; i++) {
-                    message += '<tr>' +
-                        '<td style="border: 1px solid #ddd; padding: 8px;">测试 ' + (i + 1) + '</td>' +
-                        '<td style="border: 1px solid #ddd; padding: 8px;">' + texts[i] + '</td>' +
-                        '<td style="border: 1px solid #ddd; padding: 8px;">' + fingerprints[i] + '</td>' +
-                        '</tr>';
-                }
-
-                message += '</table>';
-
-                message += '相似度结果：<br>' +
-                    Object.entries(similarity).map(([key, value]) => `${key}: ${value}`).join('<br>');
-
-
-                layer.alert(message, {title: title, area: ['600px', '400px']});
-            });
-        } catch (error) {
-            console.error('Error in performOfficialVerification:', error);
-            layui.use('layer', function () {
-                const layer = layui.layer;
-                layer.closeAll('loading');
-                layer.alert('验证过程中发生错误: ' + error.message, {title: '错误'});
-            });
-        }
-    }
-
-    async function sendVerificationRequest(model, seed) {
-        const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');
-        const apiKey = document.getElementById('api_key').value;
-        try {
-            const response = await fetch(`${apiUrl}/v1/chat/completions`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    messages: [
-                        {
-                            role: "user",
-                            content: "写一个10个字的冷笑话"
+            // 判断是否有有效数据
+            if (results && (results.valid.length > 0 || results.inconsistent.length > 0 || results.invalid.length > 0)) {
+                results.valid.forEach(function (r) {
+                    let verifyButtons = '<button class="verify-btn cyan" data-tooltip="校验函数功能是否可用,将发起1次请求" onclick="verifyFunctionCalling(\'' + r.model + '\')">函数验证</button>';
+                    if (r.model.startsWith('gpt-') || r.model.startsWith('claude-')) {
+                        let officialButtonClass = results.awaitOfficialVerification.some(item => item.model === r.model) ? "green" : "yellow";
+                        verifyButtons += '<button class="verify-btn blue" data-tooltip="低温度参数下预测序列下一个值,将发起4次请求" onclick="verifyTemperature(\'' + r.model + '\')">温度验证</button>';
+                        if (r.model.startsWith('gpt-')) {
+                            verifyButtons += '<button class="verify-btn ' + officialButtonClass + '" data-tooltip="相同种子参数下校验回复相似性和系统指纹,将发起4次请求" onclick="verifyOfficial(\'' + r.model + '\')">官转验证</button>';
                         }
-                    ],
-                    seed: seed,
-                    temperature: 0.7,
-                    model: model
-                })
-            });
+                    }
+                    content += '<tr>' +
+                        '<td class="td1 td1-ok">模型一致可用</td>' +
+                        '<td class="td2"><span class="copy-btn2" onclick="copyText(\'' + r.model + '\')">' + r.model + '</span></td>' +
+                        '<td class="td3">' + r.responseTime.toFixed(2) + '</td>' +
+                        '<td class="td4"><div class="verify-btn-group">' + verifyButtons + '</div></td>' +
+                        '</tr>';
+                });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                results.inconsistent.forEach(function (r) {
+                    content += '<tr>' +
+                        '<td class="td1 td1-no">模型不一致/映射，tnnd掺假？</td>' +
+                        '<td class="td2"><span class="copy-btn2" onclick="copyText(\'' + r.model + '\')">' + r.model + '</span></td>' +
+                        '<td class="td3">' + r.responseTime.toFixed(2) + '</td>' +
+                        '<td class="td4">' + (r.returnedModel ? '返回模型: ' + r.returnedModel : '该接口未返回模型名称') + '</td>' +
+                        '</tr>';
+                });
+
+                results.invalid.forEach(function (r) {
+                    content += '<tr>' +
+                        '<td class="td1 td1-error">模型不可用!!!，干啥呢</td>' +
+                        '<td class="td2"><span class="copy-btn2" onclick="copyText(\'' + r.model + '\')">' + r.model + '</span></td>' +
+                        '<td class="td3">-</td>' +
+                        '<td class="td4">' + (r.response_text || r.error) + '</td>' +
+                        '</tr>';
+                });
+            } else {
+                // 没有数据时显示空行
+                content += '<tr>' +
+                    '<td colspan="4" class="td1">暂无数据显示</td>' +
+                    '</tr>';
             }
 
-            return await response.json();
-        } catch (error) {
-            console.error('Error in sendVerificationRequest:', error);
-            return {error: error.message};
+            content += '</table>';
+            resultsDiv.innerHTML = content;
         }
-    }
 
-    async function verifyFunctionCalling(model) {
-        console.log("开始验证函数调用");
-        layui.use('layer', function () {
-            const layer = layui.layer;
 
-            layer.open({
-                title: '请输入两个整数 a 和 b',
-                area: ['400px', '250px'],
-                content: `
+        async function verifyOfficial(model) {
+            layui.use('layer', function () {
+                const layer = layui.layer;
+                layer.prompt({
+                    formType: 0,
+                    value: '888',
+                    title: '请输入seed值 (1-900)',
+                    area: ['300px', '50px']
+                }, function (seed, index) {
+                    layer.close(index);
+                    performOfficialVerification(model, parseInt(seed));
+
+                });
+            });
+        }
+
+        async function verifyTemperature(model) {
+            layui.use("layer", function () {
+                const layer = layui.layer;
+                layer.load();
+            });
+
+            try {
+                const results = await Promise.all(
+                    [1, 2, 3, 4].map(() => sendTemperatureVerificationRequest(model))
+                );
+                const responses = results.map((result) =>
+                    result.choices[0].message.content.trim()
+                );
+                let referenceValue;
+                if (model.startsWith("gpt-4o-mini")) {
+                    referenceValue = 32;
+                } else if (model.startsWith("gpt-4o")) {
+                    referenceValue = 59;
+                } else if (model.startsWith("claude-3-5") || model.startsWith("claude-3.5")) {
+                    referenceValue = 51;
+                } else {
+                    referenceValue = null;
+                }
+                layui.use("layer", function () {
+                    const layer = layui.layer;
+                    layer.closeAll("loading");
+
+                    let message = `<strong>当前待验证模型：${model}</strong><p>参考值：c3.5 = 51(gcp测试)，gpt-4o = 59，gpt-4o-mini = 32(azure测试)</p>`;
+                    message +=
+                        '<table style="width:100%; border-collapse: collapse; margin-bottom: 20px;">' +
+                        '<tr><th style="border: 1px solid #ddd; padding: 4px;">测试</th><th style="border: 1px solid #ddd; padding: 4px;">响应</th></tr>';
+
+                    for (let i = 0; i < 4; i++) {
+
+                        let color = responses[i] == referenceValue ? "green" : "black";
+                        message +=
+                            "<tr>" +
+                            '<td style="border: 1px solid #ddd; padding: 4px;">测试 ' +
+                            (i + 1) +
+                            "</td>" +
+                            `<td style="border: 1px solid #ddd; padding: 4px; color: ${color};">` +
+                            responses[i] +
+                            "</td>" +
+                            "</tr>";
+                    }
+
+                    message += "</table>";
+
+                    const allSame = responses.every((val) => val === responses[0]);
+                    message +=
+                        "<strong>结论：</strong> " +
+                        (allSame
+                            ? "所有响应相同，可能是官方API"
+                            : "响应不同，可能不是官方API");
+
+                    layer.alert(message, {
+                        title: "温度验证结果",
+                        area: ["600px", "400px"],
+                    });
+                });
+            } catch (error) {
+                console.error("Error in verifyTemperature:", error);
+                layui.use("layer", function () {
+                    const layer = layui.layer;
+                    layer.closeAll("loading");
+                    layer.alert("验证过程中发生错误: " + error.message, {
+                        title: "错误",
+                    });
+                });
+            }
+        }
+
+        async function sendTemperatureVerificationRequest(model) {
+            const apiUrl = document
+                .getElementById("api_url")
+                .value.replace(/\/+$/, "");
+            const apiKey = document.getElementById("api_key").value;
+            try {
+                const response = await fetch(`${apiUrl}/v1/chat/completions`, {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${apiKey}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        messages: [
+                            {
+                                role: "system",
+                                content:
+                                    "You're an associative thinker. The user gives you a sequence of 6 numbers. Your task is to figure out and provide the 7th number directly, without explaining how you got there.",
+                            },
+                            {
+                                role: "user",
+                                content: "5, 15, 77, 19, 53, 54,",
+                            },
+                        ],
+                        temperature: 0.01,
+                        model: model,
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error("Error in sendTemperatureVerificationRequest:", error);
+                return { error: error.message };
+            }
+        }
+
+        async function performOfficialVerification(model, seed) {
+            layui.use('layer', function () {
+                const layer = layui.layer;
+                layer.load();
+            });
+
+            try {
+                const results = await Promise.all([1, 2, 3, 4].map(() => sendVerificationRequest(model, seed)));
+                const texts = [];
+                const fingerprints = [];
+
+                for (let i = 0; i < results.length; i++) {
+                    if (results[i].error) {
+                        console.error(`Error in request ${i + 1}:`, results[i].error);
+                        layui.use('layer', function () {
+                            const layer = layui.layer;
+                            layer.closeAll('loading');
+                            layer.alert(`请求 ${i + 1} 失败: ${results[i].error}`, { title: '错误' });
+                        });
+                        return;
+                    }
+                    if (!results[i].choices?.[0]?.message?.content) {
+                        console.error(`Invalid response structure in request ${i + 1}:`, results[i]);
+                        layui.use('layer', function () {
+                            const layer = layui.layer;
+                            layer.closeAll('loading');
+                            layer.alert(`请求 ${i + 1} 返回的数据结构无效`, { title: '错误' });
+                        });
+                        return;
+                    }
+                    texts.push(results[i].choices[0].message.content);
+                    fingerprints.push(results[i].system_fingerprint || 'N/A');
+                }
+
+                const similarity = compareTextSimilarity(texts[0], texts[1], texts[2], texts[3]);
+
+                layui.use('layer', function () {
+                    api_url = document.getElementById('api_url').value;
+                    const layer = layui.layer;
+                    layer.closeAll('loading');
+                    if (api_url === "https://api.openai.com") {
+                        layer.alert("官方API你来验证？", { title: '官方API' });
+                    }
+                    let similarityCount = Object.values(similarity).filter(value => parseFloat(value) > 0.6).length;
+                    let lowSimilarityCount = Object.values(similarity).filter(value => parseFloat(value) < 0.1).length;
+
+                    let title = '验证结果';
+                    let message = '';
+                    if (similarityCount >= 3) {
+                        title = '恭喜你，官方API呀！';
+                        message += '<strong>Tips: 这是官方API！</strong>';
+                    } else if (similarityCount >= 2) {
+                        title = '可能是官方API';
+                        message += '<strong>Tips: 应该是官方的</strong>';
+                    } else if (lowSimilarityCount >= 2) {
+                        title = '可能是假的';
+                        message += '<strong>Tips: 假的8</strong>';
+                    } else {
+                        message += '<strong>Tips: 结果不确定，请进一步验证</strong>';
+                    }
+
+                    message += '<table style="width:100%; border-collapse: collapse; margin-bottom: 20px;">' +
+                        '<tr><th style="border: 1px solid #ddd; padding: 8px;">测试</th><th style="border: 1px solid #ddd; padding: 8px;">文本</th><th style="border: 1px solid #ddd; padding: 8px;">系统指纹</th></tr>';
+
+                    for (let i = 0; i < 4; i++) {
+                        message += '<tr>' +
+                            '<td style="border: 1px solid #ddd; padding: 8px;">测试 ' + (i + 1) + '</td>' +
+                            '<td style="border: 1px solid #ddd; padding: 8px;">' + texts[i] + '</td>' +
+                            '<td style="border: 1px solid #ddd; padding: 8px;">' + fingerprints[i] + '</td>' +
+                            '</tr>';
+                    }
+
+                    message += '</table>';
+
+                    message += '相似度结果：<br>' +
+                        Object.entries(similarity).map(([key, value]) => `${key}: ${value}`).join('<br>');
+
+
+                    layer.alert(message, { title: title, area: ['600px', '400px'] });
+                });
+            } catch (error) {
+                console.error('Error in performOfficialVerification:', error);
+                layui.use('layer', function () {
+                    const layer = layui.layer;
+                    layer.closeAll('loading');
+                    layer.alert('验证过程中发生错误: ' + error.message, { title: '错误' });
+                });
+            }
+        }
+
+        async function sendVerificationRequest(model, seed) {
+            const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');
+            const apiKey = document.getElementById('api_key').value;
+            try {
+                const response = await fetch(`${apiUrl}/v1/chat/completions`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        messages: [
+                            {
+                                role: "user",
+                                content: "写一个10个字的冷笑话"
+                            }
+                        ],
+                        seed: seed,
+                        temperature: 0.7,
+                        model: model
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Error in sendVerificationRequest:', error);
+                return { error: error.message };
+            }
+        }
+
+        async function verifyFunctionCalling(model) {
+            console.log("开始验证函数调用");
+            layui.use('layer', function () {
+                const layer = layui.layer;
+
+                layer.open({
+                    title: '请输入两个整数 a 和 b',
+                    area: ['400px', '250px'],
+                    content: `
                 <div style="padding: 10px;">
                     <div style="margin-bottom: 10px;">
                         <label style="display: inline-block; width: 100px;">请输入整数 a:</label>
@@ -1475,120 +1608,120 @@
                     </div>
                 </div>
             `,
-                btn: ['确定', '取消'],
-                yes: function (index, layero) {
-                    const a = parseInt(document.getElementById('inputA').value);
-                    const b = parseInt(document.getElementById('inputB').value);
+                    btn: ['确定', '取消'],
+                    yes: function (index, layero) {
+                        const a = parseInt(document.getElementById('inputA').value);
+                        const b = parseInt(document.getElementById('inputB').value);
 
-                    if (isNaN(a) || isNaN(b)) {
-                        layer.msg('请输入有效的整数 a 和 b');
-                        return;
-                    }
-
-                    layer.close(index);
-                    performFunctionCallingVerification(model, a, b);
-                }
-            });
-        });
-    }
-
-    async function sendFunctionCallingRequest(model, a, b) {
-        const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');
-        const apiKey = document.getElementById('api_key').value;
-        try {
-            const response = await fetch(`${apiUrl}/v1/chat/completions`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    messages: [
-                        {"role": "system", "content": "You are a helpful assistant."},
-                        {"role": "user", "content": `Please add ${a} and ${b}.`}
-                    ],
-                    functions: [
-                        {
-                            "name": "add_numbers",
-                            "description": "Adds two numbers together",
-                            "parameters": {
-                                "type": "object",
-                                "properties": {
-                                    "a": {
-                                        "type": "number",
-                                        "description": "The first number"
-                                    },
-                                    "b": {
-                                        "type": "number",
-                                        "description": "The second number"
-                                    }
-                                },
-                                "required": ["a", "b"]
-                            }
+                        if (isNaN(a) || isNaN(b)) {
+                            layer.msg('请输入有效的整数 a 和 b');
+                            return;
                         }
-                    ],
-                    function_call: "auto",
-                    temperature: 0.5,
-                    model: model
-                })
+
+                        layer.close(index);
+                        performFunctionCallingVerification(model, a, b);
+                    }
+                });
+            });
+        }
+
+        async function sendFunctionCallingRequest(model, a, b) {
+            const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');
+            const apiKey = document.getElementById('api_key').value;
+            try {
+                const response = await fetch(`${apiUrl}/v1/chat/completions`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        messages: [
+                            { "role": "system", "content": "You are a helpful assistant." },
+                            { "role": "user", "content": `Please add ${a} and ${b}.` }
+                        ],
+                        functions: [
+                            {
+                                "name": "add_numbers",
+                                "description": "Adds two numbers together",
+                                "parameters": {
+                                    "type": "object",
+                                    "properties": {
+                                        "a": {
+                                            "type": "number",
+                                            "description": "The first number"
+                                        },
+                                        "b": {
+                                            "type": "number",
+                                            "description": "The second number"
+                                        }
+                                    },
+                                    "required": ["a", "b"]
+                                }
+                            }
+                        ],
+                        function_call: "auto",
+                        temperature: 0.5,
+                        model: model
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Error in sendFunctionCallingRequest:', error);
+                return { error: error.message };
+            }
+        }
+
+        async function performFunctionCallingVerification(model, a, b) {
+            layui.use('layer', function () {
+                const layer = layui.layer;
+                layer.load();
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            try {
+                const result = await sendFunctionCallingRequest(model, a, b);
 
-            return await response.json();
-        } catch (error) {
-            console.error('Error in sendFunctionCallingRequest:', error);
-            return {error: error.message};
-        }
-    }
+                if (result.error) {
+                    console.error(`Error in request:`, result.error);
+                    layui.use('layer', function () {
+                        const layer = layui.layer;
+                        layer.closeAll('loading');
+                        layer.alert(`请求失败: ${result.error}`, { title: '错误' });
+                    });
+                    return;
+                }
 
-    async function performFunctionCallingVerification(model, a, b) {
-        layui.use('layer', function () {
-            const layer = layui.layer;
-            layer.load();
-        });
-
-        try {
-            const result = await sendFunctionCallingRequest(model, a, b);
-
-            if (result.error) {
-                console.error(`Error in request:`, result.error);
                 layui.use('layer', function () {
                     const layer = layui.layer;
                     layer.closeAll('loading');
-                    layer.alert(`请求失败: ${result.error}`, {title: '错误'});
-                });
-                return;
-            }
-
-            layui.use('layer', function () {
-                const layer = layui.layer;
-                layer.closeAll('loading');
-                const title = '<b><span style="color: black;">模型函数调用响应对比（非openai模型的函数调用响应可能有差异，但肉眼可辨）</span></b>';
-                let text;
-                // 第一种是 openai 的函数调用响应，第二种是经 oneapi 中转后 gemini 的函数调用响应，目前手里只有这两种支持 FC
-                if (result.choices?.[0]?.finish_reason === 'function_call' || result.choices?.[0]?.message?.tool_calls?.[0]?.type === "function") {
-                    text = '<b><span style="color: green;">模型返回了函数调用响应，测试模型为：' + model + '</span></b>';
-                } else {
-                    text = '<b><span style="color: red;">模型无函数调用响应返回，测试模型为：' + model + '</span></b>';
-                }
-                const referenceFunctionCall = JSON.stringify({
-                    "index": 0,
-                    "message": {
-                        "role": "assistant",
-                        "content": null,
-                        "function_call": {
-                            "name": "add_numbers",
-                            "arguments": `{"a":${a},"b":${b}}`
+                    const title = '<b><span style="color: black;">模型函数调用响应对比（非openai模型的函数调用响应可能有差异，但肉眼可辨）</span></b>';
+                    let text;
+                    // 第一种是 openai 的函数调用响应，第二种是经 oneapi 中转后 gemini 的函数调用响应，目前手里只有这两种支持 FC
+                    if (result.choices?.[0]?.finish_reason === 'function_call' || result.choices?.[0]?.message?.tool_calls?.[0]?.type === "function") {
+                        text = '<b><span style="color: green;">模型返回了函数调用响应，测试模型为：' + model + '</span></b>';
+                    } else {
+                        text = '<b><span style="color: red;">模型无函数调用响应返回，测试模型为：' + model + '</span></b>';
+                    }
+                    const referenceFunctionCall = JSON.stringify({
+                        "index": 0,
+                        "message": {
+                            "role": "assistant",
+                            "content": null,
+                            "function_call": {
+                                "name": "add_numbers",
+                                "arguments": `{"a":${a},"b":${b}}`
+                            },
                         },
-                    },
-                    "logprobs": null,
-                    "finish_reason": "function_call",
-                }, null, 4);
-                const modelFunctionCall = JSON.stringify(result.choices?.[0], null, 4);
-                const message = text + `
+                        "logprobs": null,
+                        "finish_reason": "function_call",
+                    }, null, 4);
+                    const modelFunctionCall = JSON.stringify(result.choices?.[0], null, 4);
+                    const message = text + `
                     <table border="1" style="width: 100%; border-collapse: collapse; text-align: left;">
                         <thead>
                             <tr>
@@ -1608,164 +1741,165 @@
                         </tbody>
                     </table>
                 `;
-                layer.alert(message, {title: title, area: ['800px', '600px']});
-            });
-        } catch (error) {
-            console.error('Error in performOfficialVerification:', error);
-            layui.use('layer', function () {
-                const layer = layui.layer;
-                layer.closeAll('loading');
-                layer.alert('验证过程中发生错误: ' + error.message, {title: '错误'});
-            });
+                    layer.alert(message, { title: title, area: ['800px', '600px'] });
+                });
+            } catch (error) {
+                console.error('Error in performOfficialVerification:', error);
+                layui.use('layer', function () {
+                    const layer = layui.layer;
+                    layer.closeAll('loading');
+                    layer.alert('验证过程中发生错误: ' + error.message, { title: '错误' });
+                });
+            }
         }
-    }
 
-    function compareTextSimilarity(text1, text2, text3, text4) {
-        function calculateSimilarity(str1, str2) {
-            const len1 = str1.length;
-            const len2 = str2.length;
-            const matrix = Array(len1 + 1).fill().map(() => Array(len2 + 1).fill(0));
+        function compareTextSimilarity(text1, text2, text3, text4) {
+            function calculateSimilarity(str1, str2) {
+                const len1 = str1.length;
+                const len2 = str2.length;
+                const matrix = Array(len1 + 1).fill().map(() => Array(len2 + 1).fill(0));
 
-            for (let i = 0; i <= len1; i++) matrix[i][0] = i;
-            for (let j = 0; j <= len2; j++) matrix[0][j] = j;
+                for (let i = 0; i <= len1; i++) matrix[i][0] = i;
+                for (let j = 0; j <= len2; j++) matrix[0][j] = j;
 
-            for (let i = 1; i <= len1; i++) {
-                for (let j = 1; j <= len2; j++) {
-                    const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
-                    matrix[i][j] = Math.min(
-                        matrix[i - 1][j] + 1,
-                        matrix[i][j - 1] + 1,
-                        matrix[i - 1][j - 1] + cost
-                    );
+                for (let i = 1; i <= len1; i++) {
+                    for (let j = 1; j <= len2; j++) {
+                        const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
+                        matrix[i][j] = Math.min(
+                            matrix[i - 1][j] + 1,
+                            matrix[i][j - 1] + 1,
+                            matrix[i - 1][j - 1] + cost
+                        );
+                    }
                 }
+
+                return 1 - matrix[len1][len2] / Math.max(len1, len2);
             }
 
-            return 1 - matrix[len1][len2] / Math.max(len1, len2);
+            return {
+                similarity12: calculateSimilarity(text1, text2).toFixed(4),
+                similarity13: calculateSimilarity(text1, text3).toFixed(4),
+                similarity14: calculateSimilarity(text1, text4).toFixed(4),
+                similarity23: calculateSimilarity(text2, text3).toFixed(4),
+                similarity24: calculateSimilarity(text2, text4).toFixed(4),
+                similarity34: calculateSimilarity(text3, text4).toFixed(4)
+            };
         }
 
-        return {
-            similarity12: calculateSimilarity(text1, text2).toFixed(4),
-            similarity13: calculateSimilarity(text1, text3).toFixed(4),
-            similarity14: calculateSimilarity(text1, text4).toFixed(4),
-            similarity23: calculateSimilarity(text2, text3).toFixed(4),
-            similarity24: calculateSimilarity(text2, text4).toFixed(4),
-            similarity34: calculateSimilarity(text3, text4).toFixed(4)
-        };
-    }
+
+        // 复制文本功能
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                layui.use('layer', function () {
+                    const layer = layui.layer;
+                    layer.msg('模型名已复制到剪贴板');
+                });
+            }).catch(err => {
+                console.error('复制失败:', err);
+            });
+        }
 
 
-    // 复制文本功能
-    function copyText(text) {
-        navigator.clipboard.writeText(text).then(() => {
+        // 检查额度
+        function checkQuota() {
+            const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');
+            const apiKey = document.getElementById('api_key').value;
+
             layui.use('layer', function () {
                 const layer = layui.layer;
-                layer.msg('模型名已复制到剪贴板');
-            });
-        }).catch(err => {
-            console.error('复制失败:', err);
-        });
-    }
+                layer.load();
 
+                let quotaInfo, usedInfo, remainInfo;
 
-    // 检查额度
-    function checkQuota() {
-        const apiUrl = document.getElementById('api_url').value.replace(/\/+$/, '');
-        const apiKey = document.getElementById('api_key').value;
+                // 获取总额度
+                fetch(`${apiUrl}/dashboard/billing/subscription`, {
+                    headers: { 'Authorization': `Bearer ${apiKey}` }
+                })
+                    .then(response => response.json())
+                    .then(quotaData => {
+                        quotaInfo = quotaData.hard_limit_usd ? `${quotaData.hard_limit_usd.toFixed(2)} $` : '无法获得额度信息';
 
-        layui.use('layer', function () {
-            const layer = layui.layer;
-            layer.load();
+                        // 获取使用情况
+                        const today = new Date();
+                        const year = today.getFullYear();
+                        const month = String(today.getMonth() + 1).padStart(2, '0');
+                        const day = String(today.getDate()).padStart(2, '0');
+                        const startDate = `${year}-${month}-01`;
+                        const endDate = `${year}-${month}-${day}`;
 
-            let quotaInfo, usedInfo, remainInfo;
+                        return fetch(`${apiUrl}/dashboard/billing/usage?start_date=${startDate}&end_date=${endDate}`, {
+                            headers: { 'Authorization': `Bearer ${apiKey}` }
+                        });
+                    })
+                    .then(response => response.json())
+                    .then(usageData => {
+                        usedInfo = `${(usageData.total_usage / 100).toFixed(2)} $`;
 
-            // 获取总额度
-            fetch(`${apiUrl}/dashboard/billing/subscription`, {
-                headers: {'Authorization': `Bearer ${apiKey}`}
-            })
-                .then(response => response.json())
-                .then(quotaData => {
-                    quotaInfo = quotaData.hard_limit_usd ? `${quotaData.hard_limit_usd.toFixed(2)} $` : '无法获得额度信息';
+                        // 计算剩余额度
+                        const quotaNumber = parseFloat(quotaInfo);
+                        const usedNumber = parseFloat(usedInfo);
+                        if (!isNaN(quotaNumber) && !isNaN(usedNumber)) {
+                            remainInfo = `${(quotaNumber - usedNumber).toFixed(2)} $`;
+                        } else {
+                            remainInfo = '无法计算剩余额度';
+                        }
 
-                    // 获取使用情况
-                    const today = new Date();
-                    const year = today.getFullYear();
-                    const month = String(today.getMonth() + 1).padStart(2, '0');
-                    const day = String(today.getDate()).padStart(2, '0');
-                    const startDate = `${year}-${month}-01`;
-                    const endDate = `${year}-${month}-${day}`;
-
-                    return fetch(`${apiUrl}/dashboard/billing/usage?start_date=${startDate}&end_date=${endDate}`, {
-                        headers: {'Authorization': `Bearer ${apiKey}`}
+                        const showInfo = `可用额度为: ${remainInfo}\n\n已用额度为: ${usedInfo}\n\n总额度为: ${quotaInfo}`;
+                        layer.closeAll('loading');
+                        layer.alert(showInfo);
+                    })
+                    .catch(error => {
+                        layer.closeAll('loading');
+                        layer.alert('检查额度失败: ' + error.message);
                     });
-                })
-                .then(response => response.json())
-                .then(usageData => {
-                    usedInfo = `${(usageData.total_usage / 100).toFixed(2)} $`;
+            });
+        }
 
-                    // 计算剩余额度
-                    const quotaNumber = parseFloat(quotaInfo);
-                    const usedNumber = parseFloat(usedInfo);
-                    if (!isNaN(quotaNumber) && !isNaN(usedNumber)) {
-                        remainInfo = `${(quotaNumber - usedNumber).toFixed(2)} $`;
-                    } else {
-                        remainInfo = '无法计算剩余额度';
-                    }
+        // 清空表单
+        function clearForm() {
+            document.getElementById('apiForm').reset();
+            document.getElementById('results').innerHTML = '';
+        }
 
-                    const showInfo = `可用额度为: ${remainInfo}\n\n已用额度为: ${usedInfo}\n\n总额度为: ${quotaInfo}`;
-                    layer.closeAll('loading');
-                    layer.alert(showInfo);
-                })
-                .catch(error => {
-                    layer.closeAll('loading');
-                    layer.alert('检查额度失败: ' + error.message);
-                });
-        });
-    }
-
-    // 清空表单
-    function clearForm() {
-        document.getElementById('apiForm').reset();
-        document.getElementById('results').innerHTML = '';
-    }
-
-    // 复制一致模型
-    function copyConsistentModels() {
-        const models = results.valid.map(function (r) {
-            return r.model;
-        });
-        copyText(models.join(','));
-    }
-
-    // 复制所有可用模型去重
-    function copyConsistentAndInconsistentModels() {
-        const models = results.valid.map(function (r) {
-            return r.model;
-        })
-            .concat(results.inconsistent.map(function (r) {
+        // 复制一致模型
+        function copyConsistentModels() {
+            const models = results.valid.map(function (r) {
                 return r.model;
-            }));
-        const uniqueModels = Array.from(new Set(models)); // 去重
-        copyText(uniqueModels.join(','));
-    }
+            });
+            copyText(models.join(','));
+        }
+
+        // 复制所有可用模型去重
+        function copyConsistentAndInconsistentModels() {
+            const models = results.valid.map(function (r) {
+                return r.model;
+            })
+                .concat(results.inconsistent.map(function (r) {
+                    return r.model;
+                }));
+            const uniqueModels = Array.from(new Set(models)); // 去重
+            copyText(uniqueModels.join(','));
+        }
 
 
-    // 复制一致和不一致模型的原始模型的函数名称 去重
-    function copyConsistentAndInconsistentReturedModels() {
-        const models = results.valid.map(function (r) {
-            return r.model;
-        })
-            .concat(results.inconsistent.map(function (r) {
-                return r.returnedModel;
-            }));
-        let uniqueModels = Array.from(new Set(models)); // 去重
-        //去除undefined
-        uniqueModels = uniqueModels.filter(function (s) {
-            return s && s.trim();
-        });
-        copyText(uniqueModels.join(','));
-    }
+        // 复制一致和不一致模型的原始模型的函数名称 去重
+        function copyConsistentAndInconsistentReturedModels() {
+            const models = results.valid.map(function (r) {
+                return r.model;
+            })
+                .concat(results.inconsistent.map(function (r) {
+                    return r.returnedModel;
+                }));
+            let uniqueModels = Array.from(new Set(models)); // 去重
+            //去除undefined
+            uniqueModels = uniqueModels.filter(function (s) {
+                return s && s.trim();
+            });
+            copyText(uniqueModels.join(','));
+        }
 
 
-</script>
+    </script>
 </body>
+
 </html>
