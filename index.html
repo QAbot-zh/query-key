@@ -28,6 +28,8 @@
             opacity: 0;
             transition: opacity 0.5s;
             z-index: 998;
+            pointer-events: none;
+            /* 禁止点击事件 */
         }
 
         .container {
@@ -41,16 +43,22 @@
             transition: left 0.5s, opacity 0.5s;
             z-index: 999;
             opacity: 0;
+            pointer-events: none;
+            /* 禁止点击事件 */
         }
 
         .container.show {
             left: 0;
             opacity: 1;
+            pointer-events: auto;
+            /* 显示时允许点击事件 */
         }
 
         .overlay.show {
             display: block;
             opacity: 1;
+            pointer-events: auto;
+            /* 显示时允许点击事件 */
         }
 
 
@@ -768,6 +776,12 @@
             if (container.classList.contains('show')) {
                 container.classList.remove('show');
                 overlay.classList.remove('show');
+
+                // 清空侧边栏内容并禁用输入
+                container.querySelectorAll('input, textarea').forEach(element => {
+                    element.blur(); // 移除焦点
+                });
+
             } else {
                 container.classList.add('show');
                 overlay.classList.add('show');
@@ -778,6 +792,11 @@
             const container = document.querySelector('.container');
             container.classList.remove('show');
             this.classList.remove('show');
+
+            // 清空侧边栏内容并禁用输入
+            container.querySelectorAll('input, textarea').forEach(element => {
+                element.blur(); // 移除焦点
+            });
         });
 
 
