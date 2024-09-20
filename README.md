@@ -12,7 +12,7 @@
 
 - 🔍 新增温度验证功能
 - 📊 新增函数验证功能
-
+- 🔧 优化测试提示
 
 ### v1.3.0
 
@@ -92,7 +92,8 @@
 
 - [Rick](https://linux.do/u/rick) 🚀
 - [Megasoft](https://linux.do/u/zhong_little) 💻
-- [fangyuan99](https://linux.do/u/fangyuan99) ❀
+- [fangyuan99](https://linux.do/u/fangyuan99) 🌸
+- [juzeon](https://github.com/juzeon) 🌹
 
 你们的贡献是这个项目成功的关键！
 
